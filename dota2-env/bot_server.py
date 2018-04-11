@@ -13,3 +13,4 @@ def hello_world():
         data = {'lol': 22, 'kek': 42, 'cheburek': 239}
         return jsonify(data)
     return 'Error'
+git
