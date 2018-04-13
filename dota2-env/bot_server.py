@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import time
+import random
 
 from flask import Flask
 from flask import request
@@ -10,6 +12,7 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def hello_world():
     if request.method == 'POST':
-        data = {'test1': 22, 'test2': 42, 'test3': 239}
+        data = [random.randrange(-10.0, 10.0),  random.randrange(-10.0, 10.0)]
+        print(request.get_data(as_text=True))
         return jsonify(data)
     return 'Error'
