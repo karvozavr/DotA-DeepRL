@@ -21,7 +21,7 @@ end
 
 -- Obtain damage info.
 function get_damage_info()
-    damage_info = {
+    local damage_info = {
         bot:TimeSinceDamagedByAnyHero(),
         bot:TimeSinceDamagedByCreep(),
         bot:TimeSinceDamagedByTower(),
@@ -33,13 +33,13 @@ function get_towers_info()
     local enemy_tower = GetTower(TEAM_DIRE, TOWER_MID_1);
     local ally_tower = GetTower(TEAM_RADIANT, TOWER_MID_1);
     if get_team() == -1 then
-        temp = ally_tower
+        local temp = ally_tower
         ally_tower = enemy_tower
         enemy_tower = temp
     end
         
-    enemy_tower_info = { enemy_tower:GetMaxHealth(), enemy_tower:GetHealth() }
-    ally_tower_info = { ally_tower:GetMaxHealth(), ally_tower:GetHealth() }
+    local enemy_tower_info = { enemy_tower:GetMaxHealth(), enemy_tower:GetHealth() }
+    local ally_tower_info = { ally_tower:GetMaxHealth(), ally_tower:GetHealth() }
 
     return {enemy_tower_info, ally_tower_info}
 end
@@ -92,14 +92,14 @@ end
 -- Obtain enemy hero info.
 function get_enemy_info()
 	local enemy_table = GetUnitList(UNIT_LIST_ENEMY_HEROES)
-    local enemy = nil
+    local enemy
     if enemy_table ~= nil then
         enemy = enemy_table[1]
     end
 
     local enemy_hero_input = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
     if(enemy ~= nil) then
-        enemy_position = enemy:GetLocation()
+        local enemy_position = enemy:GetLocation()
         enemy_hero_input = {
             enemy:GetAttackDamage(),
             enemy:GetAttackSpeed(),
@@ -128,7 +128,7 @@ function get_creeps_info(creeps)
 
     for creep_key, creep in pairs(creeps)
     do 
-        position = creep:GetLocation()
+        local position = creep:GetLocation()
         table.insert(creeps_info, {
             creep:GetAttackDamage(),
             creep:GetHealth(),

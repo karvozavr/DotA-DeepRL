@@ -5,8 +5,16 @@ Reward = {}
 
 local LastEnemyHP = 1000
 
-local EnemyTowerPosition = Vector(1024,320)
-local AllyTowerPosition = Vector(-1656,-1512)
+local enemy_tower = GetTower(TEAM_DIRE, TOWER_MID_1);
+local ally_tower = GetTower(TEAM_RADIANT, TOWER_MID_1);
+if GetTeam() == TEAM_DIRE then
+    temp = ally_tower
+    ally_tower = enemy_tower
+    enemy_tower = temp
+end
+
+local EnemyTowerPosition = enemy_tower:GetLocation()
+local AllyTowerPosition = ally_tower:GetLocation()
 
 local LastEnemyTowerHP = 1300
 

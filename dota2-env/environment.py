@@ -2,6 +2,7 @@
 
 import gym.envs.atari.atari_env
 
+
 class DotaEnvironment():
     observation_space = None
     action_space = None

@@ -3,7 +3,7 @@
 # from dota2.protobufs.dota_shared_enums_pb2 import DOTA_GC_TEAM, DOTABotDifficulty
 from steam import SteamClient
 from dota2 import Dota2Client
-from dota2.enums import DOTA_GC_TEAM, DOTABotDifficulty
+from dota2.enums import DOTA_GC_TEAM, DOTABotDifficulty, DOTA_GameMode
 
 # Setup logging.
 import logging
@@ -22,7 +22,12 @@ def start_dota():
 @dota.on('ready')
 def dota_launched():
     # Create game lobby.
-    dota.create_practice_lobby()
+    dota.create_practice_lobby(options={
+        'game_mode': DOTA_GameMode.DOTA_GAMEMODE_1V1MID,
+        'allow_cheats': True,
+        'fill_with_bots': True,
+        'pass_key': 'very hard password'
+    })
 
 
 @dota.on('lobby_new')
@@ -32,16 +37,22 @@ def entered_lobby(lobby):
     """
 
     # Add bots and yourself to lobby.
-    dota.join_practice_lobby_team(slot=2,
-                                  team=DOTA_GC_TEAM.SPECTATORS)
+    # dota.join_practice_lobby_team(slot=2,
+    #                               team=DOTA_GC_TEAM.SPECTATORS)
     dota.add_bot_to_practice_lobby(slot=1,
                                    team=DOTA_GC_TEAM.GOOD_GUYS,
                                    bot_difficulty=DOTABotDifficulty.BOT_DIFFICULTY_EXTRA1)
     dota.add_bot_to_practice_lobby(slot=4, team=DOTA_GC_TEAM.BAD_GUYS,
-                                   bot_difficulty=DOTABotDifficulty.BOT_DIFFICULTY_PASSIVE)
+                                   bot_difficulty=DOTABotDifficulty.BOT_DIFFICULTY_EXTRA1)
 
+    print(lobby)
     # Launch game.
-    dota.launch_practice_lobby({'fill_with_bots': True})
+    dota.launch_practice_lobby()
+
+
+@dota.on('lobby_changed')
+def lobby_changed(l):
+    print(l)
 
 
 def main():
