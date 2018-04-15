@@ -1,15 +1,20 @@
 # /usr/bin/env python3
-import threading
 
 import bot_server as server
+import logging
+
+logger = logging.getLogger('dota2env.environment')
 
 
-class DotaEnvironment():
+class DotaEnvironment:
     observation_space = None
     action_space = None
+    bot_server_thread = None
 
     def __init__(self):
-        server.run_app()
+        self.logger = logging.getLogger('dota2env.environment.DotaEnvironment')
+        self.logger.debug('Initializing DotaEnvironment instance.')
+        self.bot_server_thread = server.run_app()
 
     def step(self, action):
         """
@@ -20,7 +25,7 @@ class DotaEnvironment():
                  reward (float) : amount of reward returned after previous action
                  done (boolean): whether the episode has ended, in which case further step() calls will return undefined results
         """
-        raise NotImplementedError
+        return server.step(action=action)
 
     def reset(self):
         """
@@ -28,4 +33,4 @@ class DotaEnvironment():
 
         :return: observation: the initial observation of the space.
         """
-        raise NotImplementedError
+        return server.get_observation()

@@ -1,17 +1,30 @@
 #!/usr/bin/env python3
 from enum import IntEnum
-from threading import Event, Thread, RLock
+from threading import Event, Thread, RLock, current_thread
 from flask import Flask
 from flask import request
 from flask import jsonify
+import logging
+
+from util import action_to_json, message_to_observation
+
+logger = logging.getLogger('dota2env.bot_server')
 
 app = Flask(__name__)
 
 
-def run_app():
-    app_thread = Thread(target=app.run)
+def run_app(port=5000):
+    """
+    Run Flask
+
+    :param port:
+    :return:
+    """
+    logger.debug('Starting bot server on port {port}.'.format(port=port))
+    app_thread = Thread(target=lambda: app.run(port=port))
     app_thread.setDaemon(True)
     app_thread.start()
+    return app_thread
 
 
 class FsmState(IntEnum):
@@ -20,15 +33,38 @@ class FsmState(IntEnum):
     SEND_OBSERVATION = 2
 
 
-lock = RLock
+lock = RLock()
 observation_received = Event()
 observation = None
+current_action = None
 current_fsm_state = FsmState.WHAT_NEXT
+
+
+def step(action):
+    """
+    Execute action and receive observation from the bot.
+
+    :return: tuple (observation, reward, is_done)
+    """
+    global current_fsm_state, current_action
+    lock.acquire()
+    current_fsm_state = FsmState.ACTION_RECEIVED
+    current_action = action_to_json(action)
+    lock.release()
+
+    observation_received.wait()
+    result = observation
+    observation_received.clear()
+
+    obs = message_to_observation(result['observation'])
+    reward = result['reward']
+    done = result['done']
+    return obs, reward, done
 
 
 def get_observation():
     """
-    Get observation from bot.
+    Get observation from the bot.
 
     :return: tuple (observation, reward, is_done)
     """
@@ -41,42 +77,43 @@ def get_observation():
     result = observation
     observation_received.clear()
 
-    obs = result['observation']
+    obs = message_to_observation(result['observation'])
     reward = result['reward']
     done = result['done']
     return obs, reward, done
 
 
-def decide_what_next():
+def bot_response():
+    global current_action, current_fsm_state
     lock.acquire()
-    result = current_fsm_state
+    response = jsonify({'fsm_state': current_fsm_state, 'action': current_action})
+    current_action = None
     lock.release()
-    return result
+    return response
 
 
-def bot_response(fsm_state, action=None):
-    return jsonify({'fsm_state': fsm_state, 'action': action})
+def bot_response_lockfree(fsm_state, action=None):
+    response = jsonify({'fsm_state': fsm_state, 'action': action})
+    return response
 
 
 @app.route('/observation', methods=['POST'])
 def process_observation():
-    global observation
-    response = ''
-    if request.method == 'POST':
-        observation = request.get_json()['content']
-        observation_received.set()
-        response = bot_response(FsmState.WHAT_NEXT)
+    global observation, current_fsm_state
+    observation = request.get_json()['content']
+    observation_received.set()
+    lock.acquire()
+    current_fsm_state = FsmState.WHAT_NEXT
+    lock.release()
+    response = bot_response()
     return response
 
 
 @app.route('/what_next', methods=['POST'])
 def process_what_next():
-    response = ''
-    if request.method == 'POST':
-        print(request.get_json())
-        response = bot_response(decide_what_next())
+    response = bot_response()
     return response
 
 
 if __name__ == '__main__':
-    run_app()
+    app.run()

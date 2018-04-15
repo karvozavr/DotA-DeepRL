@@ -16,8 +16,7 @@ local fsm_state = WHAT_NEXT
 
 -- Execute action.
 function execute_action(action)
-    print("Execute action.", action)
-    Action.move_to_position(GetTower(TEAM_DIRE, TOWER_MID_1):GetLocation())
+    print("Execute order.", action)
 end
 
 -- Create JSON message from table 'message' of type 'type'
@@ -86,14 +85,16 @@ function Think()
         if fsm_state == WHAT_NEXT then
             fsm_state = DO_NOTHING
             send_what_next_message()
+            print('WHAT NEXT')
         elseif fsm_state == SEND_OBSERVATION then
             fsm_state = DO_NOTHING
             send_observation_message()
             last_time_sent = GameTime()
         elseif fsm_state == ACTION_RECEIVED then
-            fsm_state = WHAT_NEXT
+            fsm_state = SEND_OBSERVATION
             execute_action(current_action)
         elseif fsm_state == DO_NOTHING then
+            print('Doing nothing')
             -- Do nothing
         end
     end
