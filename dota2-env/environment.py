@@ -1,13 +1,17 @@
 # /usr/bin/env python3
+import threading
 
-import gym.envs.atari.atari_env
+import bot_server as server
 
 
 class DotaEnvironment():
     observation_space = None
     action_space = None
 
-    def step(self, action: object):
+    def __init__(self):
+        server.run_app()
+
+    def step(self, action):
         """
         Accepts an action and returns a tuple (observation, reward, done).
 
