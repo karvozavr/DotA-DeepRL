@@ -17,8 +17,8 @@ def main():
     obs, reward, done = env.reset()
     while True:
         obs, reward, done = env.step(action=66)
-        #print('Observation: {obs}\nReward: {reward}\nDone: {done}'.format(obs=obs, reward=reward, done=done))
-        time.sleep(0.01)
+        print('Observation: {obs}\nReward: {reward}\nDone: {done}'.format(obs=obs, reward=reward, done=done))
+        # time.sleep(0.01)
 
 
 if __name__ == '__main__':

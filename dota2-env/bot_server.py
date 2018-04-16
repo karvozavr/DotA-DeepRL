@@ -111,9 +111,9 @@ def process_observation():
 
 @app.route('/what_next', methods=['POST'])
 def process_what_next():
-    response = bot_response()
+    response = jsonify({'fsm_state': FsmState.WHAT_NEXT, 'action': action_to_json(42)})
     return response
 
-
+# TODO every query send state
 if __name__ == '__main__':
     app.run()
