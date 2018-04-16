@@ -16,6 +16,7 @@ local fsm_state = WHAT_NEXT
 
 --- Executes received action.
 -- @param action_info bot action
+--
 function execute_action(action_info)
     print("Execute order.", action_info)
     Action.execute_action(action_info)
@@ -25,6 +26,7 @@ end
 -- @param message table containing message
 -- @param type type of message e.g. 'what_next' or 'observation'
 -- @return JSON encoded {'type': type, 'content': message}
+--
 function create_message(message, type)
     local msg = {
         ['type'] = type,
@@ -39,6 +41,7 @@ end
 -- @param json_message message to send
 -- @param route route ('/what_next' or '/observation')
 -- @param callback on responce received callback
+--
 function send_message(json_message, route, callback)
     local req = CreateHTTPRequest(':5000' .. route)
     req:SetHTTPRequestRawPostBody('application/json', json_message)
@@ -60,13 +63,15 @@ function send_message(json_message, route, callback)
     end)
 end
 
--- Ask what to do next.
+--- Ask what to do next.
+--
 function send_what_next_message()
     local message = create_message('', 'what_next')
     send_message(message, '/what_next', nil)
 end
 
--- Send JSON with current state info.
+--- Send JSON with current state info.
+--
 function send_observation_message()
     local _end = false
 
@@ -93,7 +98,6 @@ function Think()
         if fsm_state == WHAT_NEXT then
             fsm_state = DO_NOTHING
             send_what_next_message()
-            print('WHAT NEXT')
         elseif fsm_state == SEND_OBSERVATION then
             fsm_state = DO_NOTHING
             send_observation_message()
@@ -102,7 +106,6 @@ function Think()
             fsm_state = SEND_OBSERVATION
             execute_action(current_action)
         elseif fsm_state == DO_NOTHING then
-            print('Doing nothing')
             -- Do nothing
         end
     end

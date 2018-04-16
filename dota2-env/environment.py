@@ -3,15 +3,23 @@
 import bot_server as server
 import logging
 
-logger = logging.getLogger('dota2env.environment')
-
 
 class DotaEnvironment:
-    observation_space = None
-    action_space = None
-    bot_server_thread = None
+    __slots__ = ['observation_space', 'action_space', 'bot_server_thread', 'logger', 'action_space', 'observation_space']
 
     def __init__(self):
+        """
+         Action space:
+            [0:5] - one-hot action class
+            [5:15] - one-hot creep to attack
+            [15:19] - one-hot ability index
+            [19:21]
+
+         Observation space:
+            [
+        """
+        self.action_space = (21,)
+        self.observation_space = (170,)
         self.logger = logging.getLogger('dota2env.environment.DotaEnvironment')
         self.logger.debug('Initializing DotaEnvironment instance.')
         self.bot_server_thread = server.run_app()

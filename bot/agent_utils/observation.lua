@@ -110,8 +110,8 @@ function get_enemy_info()
             enemy:GetMana(),
             enemy:GetMaxMana(),
             enemy:GetFacing(),
-            enemypos[1] / map_div,
-            enemypos[2] / map_div
+            enemypos[1],
+            enemypos[2]
         }
     end
 
@@ -162,7 +162,7 @@ function Observation.get_observation()
         ['enemy_creeps_info'] = enemy_creeps,
         ['ally_creeps_info'] = ally_creeps,
         ['tower_info'] = get_towers_info(),
-        ['damage_info'] = get_damage_info(),
+        ['damage_info'] = get_damage_info()
     }
 
     return observation
