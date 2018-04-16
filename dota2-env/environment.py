@@ -19,7 +19,7 @@ class DotaEnvironment:
             [
         """
         self.action_space = (21,)
-        self.observation_space = (170,)
+        self.observation_space = (172,)
         self.logger = logging.getLogger('dota2env.environment.DotaEnvironment')
         self.logger.debug('Initializing DotaEnvironment instance.')
         self.bot_server_thread = server.run_app()
@@ -41,4 +41,4 @@ class DotaEnvironment:
 
         :return: observation: the initial observation of the space.
         """
-        return server.get_observation()
+        return server.get_observation()[0]

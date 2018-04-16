@@ -31,6 +31,7 @@ end
 --- Attack enemy hero.
 --
 function attack_hero()
+    print('ATTACK HERO')
     local enemy_table = GetUnitList(UNIT_LIST_ENEMY_HEROES)
     local enemy
     if #enemy_table > 0 then
@@ -43,6 +44,7 @@ end
 -- @param ability_idx index of ability in 'ABILITY' table.
 --
 function use_ability(ability_idx)
+    print('USE ABILITY', ability_idx)
     local ability = ABILITY[ability_idx]
     if ability:IsFullyCastable() then
         Action_UseAbility(ability)
@@ -53,10 +55,15 @@ end
 -- @param creep_idx index of creep in nearby creeps table.
 --
 function attack_creep(creep_idx)
+    print('ATTACK CREEP', creep_idx)
     local enemy_creeps = bot:GetNearbyCreeps(1500, true)
     if #enemy_creeps >= creep_idx then
         Action_AttackUnit(enemy_creeps[creep_idx])
     end
+end
+
+function attack_tower()
+    print('ATTACK TOWER')
 end
 
 function move_to_position(position_vector)
@@ -82,6 +89,7 @@ function Action.execute_action(action_info)
         -- Consider params[1] as index in nearby creeps table
         attack_creep(action_params[1])
     elseif action == ACTION_ATTACK_TOWER then
+        attack_tower()
     end
 end
 

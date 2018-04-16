@@ -16,7 +16,7 @@ logger.addHandler(log_handler)
 
 def main():
     env = DotaEnvironment()
-    obs, reward, done = env.reset()
+    obs = env.reset()
     while True:
         a = np.zeros(env.action_space)
         a[0] = 1

@@ -80,4 +80,4 @@ def vectorize_observation(observation):
     result.extend(observation['tower_info'])
     result.extend(observation['damage_info'])
 
-    return result
+    return np.array(result)
