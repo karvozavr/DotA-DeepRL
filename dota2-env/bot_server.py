@@ -74,10 +74,7 @@ def get_observation():
     result = observation
     observation_received.clear()
 
-    obs = message_to_observation(result['observation'])
-    reward = result['reward']
-    done = result['done']
-    return obs, reward, done
+    return message_to_observation(result)
 
 
 def bot_response():
@@ -108,7 +105,7 @@ def process_observation():
 
 @app.route('/what_next', methods=['POST'])
 def process_what_next():
-    response = jsonify({'fsm_state': FsmState.WHAT_NEXT, 'action': action_to_json(42)})
+    response = bot_response()
     return response
 
 

@@ -11,7 +11,7 @@ def action_to_json(action):
     :param action: vectorized action
     :return: bot-compatible JSON action message
     """
-    action_response = jsonify({'action': action, 'params': [1, 2, 3, 4, 5]})
+    action_response = jsonify({'action': action[0], 'params': action[1:]})
     return action_response
 
 

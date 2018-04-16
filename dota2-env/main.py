@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import random
 import sys
 import time
 
@@ -16,7 +17,7 @@ def main():
     env = DotaEnvironment()
     obs, reward, done = env.reset()
     while True:
-        obs, reward, done = env.step(action=66)
+        obs, reward, done = env.step(action=[0, random.uniform(0, 1), random.uniform(0, 1)])
         print('Observation: {obs}\nReward: {reward}\nDone: {done}'.format(obs=obs, reward=reward, done=done))
         # time.sleep(0.01)
 

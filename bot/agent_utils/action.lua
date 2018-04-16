@@ -7,6 +7,13 @@ local ACTION_ATTACK_HERO = 1
 local ACTION_ATTACK_CREEP = 2
 local ACTION_USE_ABILITY = 3
 
+local ability = {
+    bot:GetAbilityByName('nevermore_shadowraze1'),
+    bot:GetAbilityByName('nevermore_shadowraze2'),
+    bot:GetAbilityByName('nevermore_shadowraze3'),
+    bot:GetAbilityByName('nevermore_requiem')
+}
+
 --- Move by delta vector.
 -- @param delta_vector
 --
@@ -25,6 +32,20 @@ function attack_hero()
     if enemy_table ~= nil then
         enemy = enemy_table[1]
         Action_AttackUnit(enemy, false)
+    end
+end
+
+function use_ability(ability_idx)
+    local ability = ability[ability_idx]
+    if ability:IsFullyCastable() then
+        Action_UseAbility(ability)
+    end
+end
+
+function attack_creep(creep_idx)
+    local enemy_creeps = bot:GetNearbyCreeps(1500, true)
+    if #enemy_creeps >= creep_idx then
+        Actiou_AttackUnit(enemy_creeps[creep_idx])
     end
 end
 
@@ -48,7 +69,7 @@ function Action.execute_action(action_info)
     elseif action == ACTION_ATTACK_HERO then
         attack_hero()
     elseif action == ACTION_USE_ABILITY then
-        -- TODO
+        use_ability(action_params[1])
     elseif action == ACTION_ATTACK_CREEP then
         -- TODO
     end
