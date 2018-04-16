@@ -14,12 +14,17 @@ local SEND_OBSERVATION = 2
 local DO_NOTHING = 3
 local fsm_state = WHAT_NEXT
 
--- Execute action.
-function execute_action(action)
-    print("Execute order.", action)
+--- Executes received action.
+-- @param action_info bot action
+function execute_action(action_info)
+    print("Execute order.", action_info)
+    Action.execute_action(action_info)
 end
 
--- Create JSON message from table 'message' of type 'type'
+--- Create JSON message from table 'message' of type 'type'.
+-- @param message table containing message
+-- @param type type of message e.g. 'what_next' or 'observation'
+-- @return JSON encoded {'type': type, 'content': message}
 function create_message(message, type)
     local msg = {
         ['type'] = type,
@@ -30,7 +35,10 @@ function create_message(message, type)
     return encode_msg
 end
 
--- Send JSON message to bot server.
+--- Send JSON message to bot server.
+-- @param json_message message to send
+-- @param route route ('/what_next' or '/observation')
+-- @param callback on responce received callback
 function send_message(json_message, route, callback)
     local req = CreateHTTPRequest(':5000' .. route)
     req:SetHTTPRequestRawPostBody('application/json', json_message)
@@ -74,7 +82,7 @@ function send_observation_message()
         ['state_num'] = state_num
     }
 
-    send_message(create_message(msg, 'state'), '/observation', nil)
+    send_message(create_message(msg, 'observation'), '/observation', nil)
     state_num = state_num + 1
 end
 

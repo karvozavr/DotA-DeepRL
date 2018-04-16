@@ -15,10 +15,10 @@ app = Flask(__name__)
 
 def run_app(port=5000):
     """
-    Run Flask
+    Run Flask application.
 
-    :param port:
-    :return:
+    :param port: port to run on
+    :return application thread
     """
     logger.debug('Starting bot server on port {port}.'.format(port=port))
     app_thread = Thread(target=lambda: app.run(port=port))
@@ -56,10 +56,7 @@ def step(action):
     result = observation
     observation_received.clear()
 
-    obs = message_to_observation(result['observation'])
-    reward = result['reward']
-    done = result['done']
-    return obs, reward, done
+    return message_to_observation(result)
 
 
 def get_observation():
@@ -113,6 +110,7 @@ def process_observation():
 def process_what_next():
     response = jsonify({'fsm_state': FsmState.WHAT_NEXT, 'action': action_to_json(42)})
     return response
+
 
 # TODO every query send state
 if __name__ == '__main__':

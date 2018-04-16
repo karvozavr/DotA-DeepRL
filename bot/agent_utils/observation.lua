@@ -26,6 +26,7 @@ function get_damage_info()
         bot:TimeSinceDamagedByCreep(),
         bot:TimeSinceDamagedByTower(),
     }
+    return damage_info
 end
 
 -- Obtain towers info.
@@ -46,22 +47,22 @@ end
 
 -- Obtain bot's info (specified for Nevermore).
 function get_self_info()
-    local ability1_dmg = 0
+    local ability1_dmg
     if ability1:IsFullyCastable() then
         ability1_dmg = ability1:GetAbilityDamage()
     end
 
-    local ability2_dmg = 0
+    local ability2_dmg
     if ability2:IsFullyCastable() then
         ability2_dmg = ability2:GetAbilityDamage()
     end
 
-    local ability3_dmg = 0
+    local ability3_dmg
     if ability3:IsFullyCastable() then
         ability3_dmg = ability3:GetAbilityDamage()
     end
 
-     local ability4_dmg = 0
+     local ability4_dmg
     if ability4:IsFullyCastable() then
         ability4_dmg = ability4:GetAbilityDamage()
     end
