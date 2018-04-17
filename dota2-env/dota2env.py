@@ -57,7 +57,6 @@ def lobby_changed(l):
 
 def main():
     # FIXME DO NOT PUBLISH
-    client.cli_login(username='vergiliy57', password='575Vfcnth')
     client.run_forever()
 
 
