@@ -7,6 +7,7 @@ local ACTION_ATTACK_HERO = 1
 local ACTION_ATTACK_CREEP = 2
 local ACTION_USE_ABILITY = 3
 local ACTION_ATTACK_TOWER = 4
+local last_time_move = GameTime()
 
 local ABILITY = {
     bot:GetAbilityByName('nevermore_shadowraze1'),
@@ -15,11 +16,20 @@ local ABILITY = {
     bot:GetAbilityByName('nevermore_requiem')
 }
 
+function Action.last_time_moved()
+    if last_time_move == nil then
+        last_time_move = GameTime()
+    end
+    return last_time_move
+end
+
 --- Move by delta vector.
 -- @param delta_vector
 --
 function move_delta(delta_vector)
     local position = bot:GetLocation()
+
+    last_time_move = GameTime()
 
     print('MOVE', delta_vector[1], delta_vector[2])
     position[1] = position[1] + delta_vector[1]
@@ -58,12 +68,16 @@ function attack_creep(creep_idx)
     print('ATTACK CREEP', creep_idx)
     local enemy_creeps = bot:GetNearbyCreeps(1500, true)
     if #enemy_creeps >= creep_idx then
-        Action_AttackUnit(enemy_creeps[creep_idx])
+        Action_AttackUnit(enemy_creeps[creep_idx], false)
     end
 end
 
 function attack_tower()
     print('ATTACK TOWER')
+    local towers = GetNearbyTowers(1500, true)
+    if #towers > 0 then
+        Action_AttackUnit(towers[1], false)
+    end
 end
 
 function move_to_position(position_vector)

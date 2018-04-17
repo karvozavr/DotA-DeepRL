@@ -44,6 +44,8 @@ local msg_done = false
 
 local seq_num = 0
 
+local my_last_gold
+
 function Reward.get_reward()
 	local npcBot = GetBot()
     local enemyBotTbl = GetUnitList(UNIT_LIST_ENEMY_HEROES)
@@ -57,20 +59,20 @@ function Reward.get_reward()
     local MyKill = GetHeroKills(myid)
     local MyDeath = GetHeroDeaths(myid)
 
-    if(enemyBot ~= nil) then 
+    if(enemyBot ~= nil) then
         npcBot:SetTarget(enemyBot)
     end
     local enemyTower = GetTower(TEAM_DIRE, TOWER_MID_1);
     local AllyTower = GetTower(TEAM_RADIANT, TOWER_MID_1);
 
-    if MyLastGold == nil then
-        MyLastGold = npcBot:GetGold()
+    if my_last_gold == nil then
+        my_last_gold = npcBot:GetGold()
     end
 
     local GoldReward = 0
 
-    if npcBot:GetGold() - MyLastGold > 5 then
-        GoldReward = (npcBot:GetGold() - MyLastGold)
+    if npcBot:GetGold() - my_last_gold > 5 then
+        GoldReward = (npcBot:GetGold() - my_last_gold)
     end
 
     local _XPNeededToLevel = npcBot:GetXPNeededToLevel()
@@ -96,12 +98,12 @@ function Reward.get_reward()
     if LastEnemyMaxHP == nil then
         LastEnemyMaxHP = 1000
     end
-    
-    if(enemyBot ~= nil) then 
+
+    if(enemyBot ~= nil) then
         EnemyHP = enemyBot:GetHealth()
         EnemyMaxHP = enemyBot:GetMaxHealth()
     else
-        
+
         EnemyHP = 600
         EnemyMaxHP = 1000
     end
@@ -158,7 +160,7 @@ function Reward.get_reward()
     else
         EnemyLocation = LastEnemyLocation
     end
-    
+
     local MyLocation = npcBot:GetLocation()
 
     local BotTeam = 0
@@ -181,22 +183,21 @@ function Reward.get_reward()
 
     local distance2mid = 0.1 * math.sqrt(MyLocation[1]*MyLocation[1] + MyLocation[2] * MyLocation[2])
         + dist2line
-    
+
     -- print("dist2line", dist2line)
 
     if MyLastDistance2mid == nil then
         MyLastDistance2mid = distance2mid
     end
 
-    local reward = (npcBot:GetHealth() - MyLastHP) / 10.0
-    --- EnemyHPReward
-    -- + (MyKill - LastKill) * 100
-    - (MyDeath - LastDeath) * 100
-    -- + GoldReward
-    + XPreward / 10.0
-    --- punish
-    - (MyLastDistance2mid - distance2mid) / 100.0
-    -0.01
+    local reward =
+        (npcBot:GetHealth() - MyLastHP) / 10.0
+        - EnemyHPReward
+        + (MyKill - LastKill) * 100
+        - (MyDeath - LastDeath) * 100
+        + GoldReward
+        + XPreward / 10.0
+        - (MyLastDistance2mid - distance2mid) / 100.0
 
     if enemyTower:GetHealth() > 0 then
         LastEnemyTowerHP = enemyTower:GetHealth()
@@ -206,7 +207,7 @@ function Reward.get_reward()
     AllyTowerLastHP = AllyTower:GetHealth()
     LastEnemyHP = EnemyHP
     LastEnemyMaxHP = EnemyMaxHP
-    MyLastGold = npcBot:GetGold()
+    my_last_gold = npcBot:GetGold()
     LastDistanceToLane = DistanceToLane
     LastDistanceToEnemy = DistanceToEnemy
     LastEnemyLocation = EnemyLocation

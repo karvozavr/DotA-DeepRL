@@ -72,7 +72,7 @@ def main():
     learning_rate = 0.1
     discount = 0.99
 
-    batch_size = 1000
+    batch_size = 100
     # Initialize parameters
     theta = rng.normal(scale=0.2, size=(env.action_space[0], env.observation_space[0] + 1))
 
@@ -98,9 +98,9 @@ def main():
             rewards = []
             ob = env.reset()
             done = False
-            # Only render the first trajectory
-            render_episode = n_samples == 0
             # Collect a new trajectory
+            print('collecting')
+            print(n_samples, batch_size)
             while not done:
                 action = point_get_action(theta, ob, rng=rng)
                 next_ob, rew, done = env.step(action)
