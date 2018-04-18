@@ -80,14 +80,13 @@ def get_observation():
 def bot_response():
     global current_action, current_fsm_state
     lock.acquire()
+    if action is None:
+        current_fsm_state = FsmState.SEND_OBSERVATION
+    else 
+        current_fsm_state = FsmState.ACTION_RECEIVED
     response = jsonify({'fsm_state': current_fsm_state, 'action': current_action})
     current_action = None
     lock.release()
-    return response
-
-
-def bot_response_lockfree(fsm_state, action=None):
-    response = jsonify({'fsm_state': fsm_state, 'action': action})
     return response
 
 
@@ -96,15 +95,6 @@ def process_observation():
     global observation, current_fsm_state
     observation = request.get_json()['content']
     observation_received.set()
-    lock.acquire()
-    current_fsm_state = FsmState.WHAT_NEXT
-    lock.release()
-    response = bot_response()
-    return response
-
-
-@app.route('/what_next', methods=['POST'])
-def process_what_next():
     response = bot_response()
     return response
 

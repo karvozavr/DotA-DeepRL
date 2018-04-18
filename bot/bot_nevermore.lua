@@ -12,7 +12,7 @@ local WHAT_NEXT = 0
 local ACTION_RECEIVED = 1
 local SEND_OBSERVATION = 2
 local DO_NOTHING = 3
-local fsm_state = WHAT_NEXT
+local fsm_state = SEND_OBSERVATION 
 
 --- Executes received action.
 -- @param action_info bot action
@@ -95,10 +95,7 @@ local last_time_sent = GameTime()
 
 function Think()
     if (GetGameState() == GAME_STATE_GAME_IN_PROGRESS or GetGameState() == GAME_STATE_PRE_GAME or GetGameState() == GAME_STATE_POST_GAME) then
-        if fsm_state == WHAT_NEXT then
-            fsm_state = DO_NOTHING
-            send_what_next_message()
-        elseif fsm_state == SEND_OBSERVATION then
+        if fsm_state == SEND_OBSERVATION then
             fsm_state = DO_NOTHING
             send_observation_message()
             last_time_sent = GameTime()

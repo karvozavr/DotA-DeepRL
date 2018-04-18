@@ -14,7 +14,7 @@
       <file leaf-file-name="bot_nevermore.lua" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bot_nevermore.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="832">
+            <state relative-caret-position="1596">
               <caret line="84" column="17" selection-start-line="84" selection-start-column="17" selection-end-line="84" selection-end-column="17" />
             </state>
           </provider>
@@ -23,8 +23,8 @@
       <file leaf-file-name="action.lua" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/agent_utils/action.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="78" column="14" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
+            <state relative-caret-position="1315">
+              <caret line="94" column="64" lean-forward="true" selection-start-line="94" selection-start-column="64" selection-end-line="94" selection-end-column="64" />
             </state>
           </provider>
         </entry>
@@ -33,7 +33,7 @@
         <entry file="file://$PROJECT_DIR$/agent_utils/observation.lua">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1273">
-              <caret line="67" column="23" lean-forward="true" selection-start-line="67" selection-start-column="23" selection-end-line="67" selection-end-column="23" />
+              <caret line="67" column="23" selection-start-line="67" selection-start-column="23" selection-end-line="67" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -41,8 +41,8 @@
       <file leaf-file-name="reward.lua" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/agent_utils/reward.lua">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2200">
-              <caret line="186" column="36" lean-forward="true" selection-start-line="186" selection-start-column="36" selection-end-line="186" selection-end-column="36" />
+            <state relative-caret-position="3534">
+              <caret line="186" column="36" selection-start-line="186" selection-start-column="36" selection-end-line="186" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -88,7 +88,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="y" value="27" />
     <option name="width" value="950" />
     <option name="height" value="1053" />
@@ -98,7 +98,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -125,6 +124,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -169,7 +169,7 @@
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Console" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" sideWeight="0.49947917" visible="true" weight="0.32876712" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.49947917" weight="0.32876712" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15416667" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="LuaJ" order="3" />
@@ -194,6 +194,41 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/bot_nevermore.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1596">
+          <caret line="84" column="17" selection-start-line="84" selection-start-column="17" selection-end-line="84" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/agent_utils/observation.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1273">
+          <caret line="67" column="23" lean-forward="true" selection-start-line="67" selection-start-column="23" selection-end-line="67" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/agent_utils/reward.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3534">
+          <caret line="186" column="36" lean-forward="true" selection-start-line="186" selection-start-column="36" selection-end-line="186" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utility.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/agent_utils/action.lua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1482">
+          <caret line="78" column="14" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/bot_nevermore.lua">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1577">
@@ -330,28 +365,28 @@
     <entry file="file://$PROJECT_DIR$/agent_utils/observation.lua">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1273">
-          <caret line="67" column="23" lean-forward="true" selection-start-line="67" selection-start-column="23" selection-end-line="67" selection-end-column="23" />
+          <caret line="67" column="23" selection-start-line="67" selection-start-column="23" selection-end-line="67" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/agent_utils/reward.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2200">
-          <caret line="186" column="36" lean-forward="true" selection-start-line="186" selection-start-column="36" selection-end-line="186" selection-end-column="36" />
+        <state relative-caret-position="3534">
+          <caret line="186" column="36" selection-start-line="186" selection-start-column="36" selection-end-line="186" selection-end-column="36" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bot_nevermore.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="832">
+        <state relative-caret-position="1596">
           <caret line="84" column="17" selection-start-line="84" selection-start-column="17" selection-end-line="84" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/agent_utils/action.lua">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="78" column="14" selection-start-line="78" selection-start-column="14" selection-end-line="78" selection-end-column="14" />
+        <state relative-caret-position="1315">
+          <caret line="94" column="64" lean-forward="true" selection-start-line="94" selection-start-column="64" selection-end-line="94" selection-end-column="64" />
         </state>
       </provider>
     </entry>
