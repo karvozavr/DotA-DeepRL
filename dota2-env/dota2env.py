@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
+import time
 
-# from dota2.protobufs.dota_shared_enums_pb2 import DOTA_GC_TEAM, DOTABotDifficulty
 from steam import SteamClient
 from dota2 import Dota2Client
 from dota2.enums import DOTA_GC_TEAM, DOTABotDifficulty, DOTA_GameMode
+from dota2.features.party import Party
+from dota2.features.lobby import Lobby
+import click
 
 # Setup logging.
 import logging
@@ -26,11 +29,13 @@ def dota_launched():
         'game_mode': DOTA_GameMode.DOTA_GAMEMODE_1V1MID,
         'allow_cheats': True,
         'fill_with_bots': True,
-        'pass_key': 'very hard password'
+        'pass_key': 'very hard password',
+        'bot_radiant': 0,
+        'bot_dire': 0
     })
 
 
-@dota.on('lobby_new')
+@dota.on(Lobby.EVENT_LOBBY_NEW)
 def entered_lobby(lobby):
     """
     Entered a lobby event handler (by creating or joining one).
@@ -46,17 +51,25 @@ def entered_lobby(lobby):
                                    bot_difficulty=DOTABotDifficulty.BOT_DIFFICULTY_EXTRA1)
 
     print(lobby)
+
+
+@dota.on(Party.EVENT_NEW_PARTY)
+def party_created():
     # Launch game.
+    time.sleep(3)
     dota.launch_practice_lobby()
 
 
-@dota.on('lobby_changed')
+@dota.on(Lobby.EVENT_LOBBY_CHANGED)
 def lobby_changed(l):
     print(l)
 
 
-def main():
-    # FIXME DO NOT PUBLISH
+@click.command()
+@click.option('--login', default='vergiliy57', help='Steam login.')
+@click.option('--password', help='Steam login.')
+def main(login, password):
+    client.login(username=login, password=password)
     client.run_forever()
 
 
