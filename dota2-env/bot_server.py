@@ -80,9 +80,9 @@ def get_observation():
 def bot_response():
     global current_action, current_fsm_state
     lock.acquire()
-    if action is None:
+    if current_action is None:
         current_fsm_state = FsmState.SEND_OBSERVATION
-    else 
+    else: 
         current_fsm_state = FsmState.ACTION_RECEIVED
     response = jsonify({'fsm_state': current_fsm_state, 'action': current_action})
     current_action = None

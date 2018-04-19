@@ -25,13 +25,14 @@ def start_dota():
 @dota.on('ready')
 def dota_launched():
     # Create game lobby.
-    dota.create_practice_lobby(options={
+    # dota.invite_to_party(76561198044453639)
+    dota.create_tournament_lobby(options={
         'game_mode': DOTA_GameMode.DOTA_GAMEMODE_1V1MID,
         'allow_cheats': True,
         'fill_with_bots': True,
-        'pass_key': 'very hard password',
         'bot_radiant': 0,
-        'bot_dire': 0
+        'bot_dire': 0,
+        'bot_difficulty_radiant': DOTABotDifficulty.BOT_DIFFICULTY_EXTRA3
     })
 
 
@@ -42,31 +43,27 @@ def entered_lobby(lobby):
     """
 
     # Add bots and yourself to lobby.
-    # dota.join_practice_lobby_team(slot=2,
-    #                               team=DOTA_GC_TEAM.SPECTATORS)
-    dota.add_bot_to_practice_lobby(slot=1,
-                                   team=DOTA_GC_TEAM.GOOD_GUYS,
-                                   bot_difficulty=DOTABotDifficulty.BOT_DIFFICULTY_EXTRA1)
-    dota.add_bot_to_practice_lobby(slot=4, team=DOTA_GC_TEAM.BAD_GUYS,
-                                   bot_difficulty=DOTABotDifficulty.BOT_DIFFICULTY_EXTRA1)
+    dota.join_practice_lobby_team()
 
     print(lobby)
+    dota.invite_to_lobby(76561198082970923)
 
 
-@dota.on(Party.EVENT_NEW_PARTY)
-def party_created():
+@dota.on(Lobby.EVENT_LOBBY_INVITE)
+def party_created(p):
     # Launch game.
-    time.sleep(3)
-    dota.launch_practice_lobby()
+    print('ITS PARTY TIME!!!!!!!!!!!!!!!!!!!!!!!!!')
 
 
 @dota.on(Lobby.EVENT_LOBBY_CHANGED)
 def lobby_changed(l):
+    global flag
     print(l)
+    dota.launch_practice_lobby()
 
 
 @click.command()
-@click.option('--login', default='vergiliy57', help='Steam login.')
+@click.option('--login', default='iovinien', help='Steam login.')
 @click.option('--password', help='Steam login.')
 def main(login, password):
     client.login(username=login, password=password)
