@@ -46,7 +46,7 @@ function attack_hero()
     local enemy
     if #enemy_table > 0 then
         enemy = enemy_table[1]
-        Action_AttackUnit(enemy, false)
+        bot:Action_AttackUnit(enemy, false)
     end
 end
 
@@ -57,7 +57,7 @@ function use_ability(ability_idx)
     print('USE ABILITY', ability_idx)
     local ability = ABILITY[ability_idx]
     if ability:IsFullyCastable() then
-        Action_UseAbility(ability)
+        bot:Action_UseAbility(ability)
     end
 end
 
@@ -68,15 +68,15 @@ function attack_creep(creep_idx)
     print('ATTACK CREEP', creep_idx)
     local enemy_creeps = bot:GetNearbyCreeps(1500, true)
     if #enemy_creeps >= creep_idx then
-        Action_AttackUnit(enemy_creeps[creep_idx], false)
+        bot:Action_AttackUnit(enemy_creeps[creep_idx], false)
     end
 end
 
 function attack_tower()
     print('ATTACK TOWER')
-    local towers = GetNearbyTowers(1500, true)
+    local towers = bot:GetNearbyTowers(1500, true)
     if #towers > 0 then
-        Action_AttackUnit(towers[1], false)
+        bot:Action_AttackUnit(towers[1], false)
     end
 end
 

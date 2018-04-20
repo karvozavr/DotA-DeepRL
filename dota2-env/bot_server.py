@@ -48,7 +48,6 @@ def step(action):
     """
     global current_fsm_state, current_action
 
-    print("I'm called")
     lock.acquire()
     current_fsm_state = FsmState.ACTION_RECEIVED
     current_action = action_to_json2(action)
@@ -67,8 +66,8 @@ def get_observation():
 
     :return: tuple (observation, reward, is_done)
     """
-    print("I'm called")
     global current_fsm_state
+
     lock.acquire()
     current_fsm_state = FsmState.SEND_OBSERVATION
     lock.release()

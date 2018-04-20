@@ -75,7 +75,8 @@ end
 function send_observation_message()
     local _end = false
 
-    if GetGameState() == GAME_STATE_POST_GAME or (GameTime() - Action.last_time_moved()) > 5 then
+    --or (GameTime() - Action.last_time_moved()) > 5
+    if GetGameState() == GAME_STATE_POST_GAME then
         _end = true
         print('Bot: the game has ended.')
     end
@@ -96,6 +97,7 @@ local last_time_sent = GameTime()
 function Think()
     if (GetGameState() == GAME_STATE_GAME_IN_PROGRESS or GetGameState() == GAME_STATE_PRE_GAME or GetGameState() == GAME_STATE_POST_GAME) then
         if fsm_state == SEND_OBSERVATION then
+            print('Sending')
             fsm_state = DO_NOTHING
             send_observation_message()
             last_time_sent = GameTime()

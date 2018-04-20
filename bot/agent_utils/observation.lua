@@ -113,8 +113,8 @@ function get_enemy_info()
             enemy:GetMana(),
             enemy:GetMaxMana(),
             enemy:GetFacing(),
-            enemypos[1],
-            enemypos[2]
+            enemy_position[1],
+            enemy_position[2]
         }
     end
 
@@ -154,12 +154,10 @@ end
 
 -- Get whole observation.
 function Observation.get_observation()
-    local observation = {}
-
     local enemy_creeps = get_creeps_info(bot:GetNearbyCreeps(1500, true))
     local ally_creeps = get_creeps_info(bot:GetNearbyCreeps(1500, false))
 
-    observation = {
+    local observation = {
         ['self_info'] = get_self_info(),
         ['enemy_info'] = get_enemy_info(),
         ['enemy_creeps_info'] = enemy_creeps,
