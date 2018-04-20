@@ -3,9 +3,40 @@
 import bot_server as server
 import logging
 
+from tensorforce.environments import Environment
+
+
+class DotaEnv(Environment):
+
+    def __init__(self):
+        self.action_space = (21,)
+        self.observation_space = (172,)
+        server.run_app()
+
+    def reset(self):
+        return server.get_observation()[0]
+
+    def execute(self, actions):
+        state, reward, terminal = server.step(action=actions)
+        return state, terminal, reward
+
+    @property
+    def states(self):
+        return dict(type='float', shape=(172,))
+
+    @property
+    def actions(self):
+        return dict(
+            action_type=dict(type='int', num_actions=5),
+            move_vector=dict(type='float', shape=(2,), max_value=150.0, min_value=-150.0),
+            creep_index=dict(type='int', num_actions=10),
+            ability_index=dict(type='int', num_actions=4)
+        )
+
 
 class DotaEnvironment:
-    __slots__ = ['observation_space', 'action_space', 'bot_server_thread', 'logger', 'action_space', 'observation_space']
+    __slots__ = ['observation_space', 'action_space', 'bot_server_thread', 'logger', 'action_space',
+                 'observation_space']
 
     def __init__(self):
         """
@@ -13,10 +44,9 @@ class DotaEnvironment:
             [0:5] - one-hot action class
             [5:15] - one-hot creep to attack
             [15:19] - one-hot ability index
-            [19:21]
+            [19:21] - movement
 
          Observation space:
-            [
         """
         self.action_space = (21,)
         self.observation_space = (172,)

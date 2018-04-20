@@ -47,6 +47,34 @@ def action_to_json(action_vector):
     return action_response
 
 
+def action_to_json2(actions):
+    """
+    :param action_vector: vectorized action
+    :return: bot-compatible JSON action message
+    """
+
+    params = []
+    action = actions['action_type']
+    if action is 0:
+        # move
+        params = action['move_vector']
+    elif action is 1:
+        # attack hero
+        pass
+    elif action is 2:
+        # attack creep
+        params.append(action['creep_index'])
+    elif action is 3:
+        # use ability
+        params.append(action['ability_index'])
+
+    action_response = {
+        'action': actions['action_type'],
+        'params': params
+    }
+    return action_response
+
+
 # TODO
 def message_to_observation(observation_message):
     """

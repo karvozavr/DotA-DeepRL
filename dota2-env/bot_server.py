@@ -6,7 +6,7 @@ from flask import request
 from flask import jsonify
 import logging
 
-from util import action_to_json, message_to_observation
+from util import action_to_json2, message_to_observation
 
 logger = logging.getLogger('dota2env.bot_server')
 
@@ -47,9 +47,11 @@ def step(action):
     :return: tuple (observation, reward, is_done)
     """
     global current_fsm_state, current_action
+
+    print("I'm called")
     lock.acquire()
     current_fsm_state = FsmState.ACTION_RECEIVED
-    current_action = action_to_json(action)
+    current_action = action_to_json2(action)
     lock.release()
 
     observation_received.wait()
@@ -65,6 +67,7 @@ def get_observation():
 
     :return: tuple (observation, reward, is_done)
     """
+    print("I'm called")
     global current_fsm_state
     lock.acquire()
     current_fsm_state = FsmState.SEND_OBSERVATION
