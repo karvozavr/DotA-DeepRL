@@ -193,7 +193,7 @@ function Reward.get_reward()
     local reward =
         (npcBot:GetHealth() - MyLastHP) / 10.0
         - EnemyHPReward
-        + (MyKill - LastKill) * 100
+        + (MyKill - LastKill) * 1000
         - (MyDeath - LastDeath) * 100
         + GoldReward
         + XPreward / 10.0
