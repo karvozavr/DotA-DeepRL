@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import time
 
+from dota2.features import Party
 from steam import SteamClient
 from dota2 import Dota2Client
 from dota2.enums import DOTA_GC_TEAM, DOTABotDifficulty, DOTA_GameMode
-from dota2.features.party import Party
-from dota2.features.lobby import Lobby
+from dota2.features import Lobby
 import click
 
 # Setup logging.
@@ -26,13 +26,13 @@ def start_dota():
 def dota_launched():
     # Create game lobby.
     # dota.invite_to_party(76561198044453639)
-    dota.create_tournament_lobby(options={
+    dota.create_practice_lobby(password='12345', options={
         'game_mode': DOTA_GameMode.DOTA_GAMEMODE_1V1MID,
+        'server_region': 0,
         'allow_cheats': True,
         'fill_with_bots': True,
-        'bot_radiant': 0,
-        'bot_dire': 0,
-        'bot_difficulty_radiant': DOTABotDifficulty.BOT_DIFFICULTY_EXTRA3
+        'bot_radiant': 1,
+        'bot_dire': 1
     })
 
 
@@ -46,13 +46,14 @@ def entered_lobby(lobby):
     dota.join_practice_lobby_team()
 
     print(lobby)
-    dota.invite_to_lobby(76561198082970923)
+    #dota.invite_to_lobby(76561198082970923)
 
 
-@dota.on(Lobby.EVENT_LOBBY_INVITE)
+@dota.on(Party.EVENT_PARTY_INVITE)
 def party_created(p):
     # Launch game.
     print('ITS PARTY TIME!!!!!!!!!!!!!!!!!!!!!!!!!')
+    dota.launch_practice_lobby()
 
 
 @dota.on(Lobby.EVENT_LOBBY_CHANGED)
@@ -60,6 +61,7 @@ def lobby_changed(l):
     global flag
     print(l)
     dota.launch_practice_lobby()
+
 
 
 @click.command()

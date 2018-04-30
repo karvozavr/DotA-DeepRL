@@ -47,29 +47,32 @@ def action_to_json(action_vector):
     return action_response
 
 
-def action_to_json2(actions):
+def action_to_json2(actions_dict):
     """
+    Lua indexes starts from 1!
+
     :param action_vector: vectorized action
     :return: bot-compatible JSON action message
     """
 
     params = []
-    action = actions['action_type']
+    action = int(actions_dict['action_type'])
     if action is 0:
         # move
-        params = action['move_vector']
+        params.append(float(actions_dict['move_vector'][0]))
+        params.append(float(actions_dict['move_vector'][1]))
     elif action is 1:
         # attack hero
         pass
     elif action is 2:
         # attack creep
-        params.append(action['creep_index'])
+        params.append(int(actions_dict['creep_index']) + 1)
     elif action is 3:
         # use ability
-        params.append(action['ability_index'])
+        params.append(int(actions_dict['ability_index']) + 1)
 
     action_response = {
-        'action': actions['action_type'],
+        'action': action,
         'params': params
     }
     return action_response
@@ -82,9 +85,14 @@ def message_to_observation(observation_message):
     :param observation_message:
     :return:
     """
-    observation = vectorize_observation(observation_message['observation'])
-    reward = observation_message['reward']
-    done = observation_message['done']
+    if observation_message is not None:
+        observation = vectorize_observation(observation_message['observation'])
+        reward = observation_message['reward']
+        done = observation_message['done']
+    else:
+        observation = []
+        reward = 0
+        done = True
     return observation, reward, done
 
 

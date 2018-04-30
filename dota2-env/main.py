@@ -5,7 +5,7 @@ import sys
 import time
 import numpy as np
 
-from environment import DotaEnvironment
+from environment import DotaEnv
 import logging
 
 logger = logging.getLogger('dota2env')
@@ -16,15 +16,18 @@ logger.addHandler(log_handler)
 
 
 def main():
-    env = DotaEnvironment()
+    env = DotaEnv()
     obs = env.reset()
     while True:
-        a = np.zeros(env.action_space)
-        a[0] = 1
-        a[-2] = random.choice([random.uniform(-50, -20), random.uniform(20, 50)])
-        a[-1] = random.choice([random.uniform(-50, -20), random.uniform(20, 50)])
-        obs, reward, done = env.step(action=a)
-        print('Observation: {obs}\nReward: {reward}\nDone: {done}'.format(obs=len(obs), reward=reward, done=done))
+        a = dict(
+            action_type=0,
+            move_vector=(55, 55)
+        )
+
+        obs, terminal, reward = env.execute(actions=a)
+        if terminal:
+            print('Observation: {obs}\nReward: {reward}\nDone: {done}'.format(obs=len(obs), reward=reward, done=terminal))
+            obs = env.reset()
         # time.sleep(0.01)
 
 

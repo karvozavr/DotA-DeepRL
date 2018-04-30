@@ -12,21 +12,6 @@ from tensorforce.execution import Runner
 # Create an environment
 env = DotaEnv()
 
-# Network as list of layers
-network_spec = [
-    dict(type='dense', size=172, activation='tanh'),
-    dict(type='dense', size=172, activation='tanh'),
-    dict(type='dense', size=172, activation='tanh'),
-    dict(type='dense', size=172, activation='tanh')
-]
-
-agent = PPOAgent(
-    actions=env.actions,
-    states=env.states,
-    discount=0.99,
-    network=network_spec
-)
-
 
 # Callback function printing episode statistics
 def episode_finished(r):
@@ -36,6 +21,21 @@ def episode_finished(r):
 
 
 def main():
+    # Network as list of layers
+    network_spec = [
+        dict(type='dense', size=172, activation='tanh'),
+        dict(type='dense', size=172, activation='tanh'),
+        dict(type='dense', size=172, activation='tanh'),
+        dict(type='dense', size=172, activation='tanh')
+    ]
+
+    agent = PPOAgent(
+        actions=env.actions,
+        states=env.states,
+        discount=0.99,
+        network=network_spec
+    )
+
     # Create the runner
     runner = Runner(agent=agent, environment=env)
 
