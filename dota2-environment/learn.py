@@ -4,7 +4,7 @@ from dotaenv import DotaEnvironment
 
 import numpy as np
 
-from tensorforce.agents import PPOAgent
+from tensorforce.agents import TRPOAgent
 from tensorforce.execution import Runner
 import os
 
@@ -21,7 +21,7 @@ network_spec = [
     dict(type='dense', size=172, activation='tanh'),
 ]
 
-agent = PPOAgent(
+agent = TRPOAgent(
     actions=env.actions,
     states=env.states,
     discount=0.99,

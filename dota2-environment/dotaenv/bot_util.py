@@ -55,8 +55,8 @@ def action_to_json(actions_dict):
     action = int(actions_dict['action_type'])
     if action is 0:
         # move
-        params.append(float(actions_dict['move_vector'][0]))
-        params.append(float(actions_dict['move_vector'][1]))
+        params.append(int(actions_dict['move_vector']))
+        action = 5
     elif action is 1:
         # attack hero
         pass

@@ -37,7 +37,7 @@ class DotaEnvironment(Environment):
     def actions(self):
         return dict(
             action_type=dict(type='int', num_actions=5),
-            move_vector=dict(type='float', shape=(2,), max_value=150.0, min_value=-150.0),
+            move_vector=dict(type='int', num_actions=16),
             creep_index=dict(type='int', num_actions=10),
             ability_index=dict(type='int', num_actions=4)
         )
