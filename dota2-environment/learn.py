@@ -12,20 +12,20 @@ import os
 env = DotaEnvironment()
 
 network_spec = [
-    dict(type='dense', size=172, activation='selu'),
-    dict(type='dense', size=172, activation='selu'),
-    dict(type='dense', size=172, activation='selu'),
-    dict(type='dense', size=172, activation='selu'),
-    dict(type='dense', size=172, activation='selu'),
-    dict(type='dense', size=172, activation='selu'),
-    dict(type='dense', size=172, activation='selu')
+    dict(type='dense', size=172, activation='tanh'),
+    dict(type='dense', size=172, activation='tanh'),
+    dict(type='dense', size=172, activation='tanh'),
+    dict(type='dense', size=172, activation='tanh'),
+    dict(type='dense', size=172, activation='tanh'),
+    dict(type='dense', size=172, activation='tanh'),
+    dict(type='dense', size=172, activation='tanh'),
 ]
 
 agent = PPOAgent(
     actions=env.actions,
     states=env.states,
     discount=0.99,
-    network=network_spec
+    network=network_spec,
 )
 
 
@@ -33,7 +33,7 @@ agent = PPOAgent(
 def episode_finished(r):
     print("Finished episode {ep} after {ts} timesteps (reward: {reward})".format(ep=r.episode, ts=r.episode_timestep,
                                                                                  reward=r.episode_rewards[-1]))
-    agent.save_model(os.path.join(os.getcwd(), 'saved_model'))
+    agent.save_model('./saved_model/')
     return True
 
 
