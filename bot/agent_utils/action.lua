@@ -84,12 +84,18 @@ function move_to_position(position_vector)
     bot:Action_MoveToLocation(position_vector)
 end
 
+function upgrade_abilities()
+    bot:ActionImmediate_LevelAbility('nevermore_shadowraze1')
+end
+
 --- Execute given action.
 -- @param action_info action info {'action': action id, 'params': action parameters}
 --
 function Action.execute_action(action_info)
     local action = action_info['action']
     local action_params = action_info['params']
+
+    upgrade_abilities()
 
     if action == ACTION_MOVE then
         -- Consider params[1], params[2] as x, y of delta vector

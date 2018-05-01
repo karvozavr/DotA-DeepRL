@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import time
 
 import pyautogui as gui
@@ -11,7 +12,7 @@ def run():
 
 def launch_dota():
     gui.press('winleft')
-    time.sleep(0.5)
+    time.sleep(1)
 
     gui.typewrite('dota', interval=0.1)
     gui.press('enter')
@@ -26,13 +27,13 @@ def restart_game():
 
 def start_game():
     # start
-    gui.click(x=1555, y=975, pause=0.3)
-    # create lobby
-    gui.click(x=1555, y=435, pause=1)
-    # join coaches
-    gui.click(x=1415, y=480, pause=3)
-    # start game
     gui.click(x=1555, y=975, pause=0.5)
+    # create lobby
+    gui.click(x=1555, y=435, pause=2)
+    # join coaches
+    gui.click(x=1415, y=480, pause=2)
+    # start game
+    gui.click(x=1555, y=975, pause=1)
 
 
 def set_timescale():
@@ -45,4 +46,5 @@ def set_timescale():
 
 
 if __name__ == '__main__':
+    time.sleep(2)
     run()
