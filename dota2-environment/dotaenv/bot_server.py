@@ -1,12 +1,11 @@
-#!/usr/bin/env python3
 from enum import IntEnum
-from threading import Event, Thread, RLock, current_thread
+from threading import Event, Thread, RLock
 from flask import Flask
 from flask import request
 from flask import jsonify
 import logging
 
-from util import action_to_json2, message_to_observation
+from dotaenv.bot_util import message_to_observation, action_to_json
 
 logger = logging.getLogger('dota2env.bot_server')
 
@@ -15,7 +14,7 @@ app = Flask(__name__)
 
 def run_app(port=5000):
     """
-    Run Flask application.
+    Run bot server application in separate thread.
 
     :param port: port to run on
     :return application thread
@@ -50,7 +49,7 @@ def step(action):
 
     lock.acquire()
     current_fsm_state = FsmState.ACTION_RECEIVED
-    current_action = action_to_json2(action)
+    current_action = action_to_json(action)
     lock.release()
 
     observation_received.wait(timeout=4)
@@ -101,8 +100,3 @@ def process_observation():
     observation_received.set()
     response = bot_response()
     return response
-
-
-# TODO every query send state
-if __name__ == '__main__':
-    app.run()

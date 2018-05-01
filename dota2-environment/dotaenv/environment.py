@@ -1,12 +1,12 @@
 # /usr/bin/env python3
 
-import bot_server as server
-from dota2runner import start_game, set_timescale, launch_dota, restart_game
+import dotaenv.bot_server as server
+from dotaenv.dota_runner import start_game, set_timescale, launch_dota, restart_game
 
 from tensorforce.environments import Environment
 
 
-class DotaEnv(Environment):
+class DotaEnvironment(Environment):
 
     def __init__(self):
         self.action_space = (21,)
@@ -15,12 +15,13 @@ class DotaEnv(Environment):
         server.run_app()
         launch_dota()
         set_timescale()
+        start_game()
 
     def reset(self):
         if self.terminal:
             restart_game()
             self.terminal = False
-        start_game()
+            start_game()
         return server.get_observation()[0]
 
     def execute(self, actions):

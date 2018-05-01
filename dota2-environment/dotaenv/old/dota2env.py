@@ -25,7 +25,7 @@ def start_dota():
 @dota.on('ready')
 def dota_launched():
     # Create game lobby.
-    # dota.invite_to_party(76561198044453639)
+    # dotaenv.invite_to_party(76561198044453639)
     dota.create_practice_lobby(password='12345', options={
         'game_mode': DOTA_GameMode.DOTA_GAMEMODE_1V1MID,
         'server_region': 0,
@@ -46,7 +46,7 @@ def entered_lobby(lobby):
     dota.join_practice_lobby_team()
 
     print(lobby)
-    #dota.invite_to_lobby(76561198082970923)
+    #dotaenv.invite_to_lobby(76561198082970923)
 
 
 @dota.on(Party.EVENT_PARTY_INVITE)
