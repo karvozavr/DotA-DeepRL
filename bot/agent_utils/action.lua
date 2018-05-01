@@ -9,6 +9,8 @@ local ACTION_USE_ABILITY = 3
 local ACTION_ATTACK_TOWER = 4
 local last_time_move = GameTime()
 
+local wrong_action = 0
+
 local ABILITY = {
     bot:GetAbilityByName('nevermore_shadowraze1'),
     bot:GetAbilityByName('nevermore_shadowraze2'),
@@ -35,7 +37,7 @@ function move_delta(delta_vector)
     position[1] = position[1] + delta_vector[1]
     position[2] = position[2] + delta_vector[2]
 
-    bot:Action_MoveDirectly(position)
+    bot:Action_MoveToLocation(position)
 end
 
 --- Attack enemy hero.
@@ -44,9 +46,13 @@ function attack_hero()
     print('ATTACK HERO')
     local enemy_table = GetUnitList(UNIT_LIST_ENEMY_HEROES)
     local enemy
+    wrong_action = 1
     if #enemy_table > 0 then
         enemy = enemy_table[1]
-        bot:Action_AttackUnit(enemy, false)
+        if GetUnitToUnitDistance(bot, enemy) < 1500 then
+            wrong_action = 0
+            bot:Action_AttackUnit(enemy, false)
+        end
     end
 end
 
@@ -58,6 +64,8 @@ function use_ability(ability_idx)
     local ability = ABILITY[ability_idx]
     if ability:IsFullyCastable() then
         bot:Action_UseAbility(ability)
+    else
+        wrong_action = 1
     end
 end
 
@@ -69,6 +77,8 @@ function attack_creep(creep_idx)
     local enemy_creeps = bot:GetNearbyCreeps(1500, true)
     if #enemy_creeps >= creep_idx then
         bot:Action_AttackUnit(enemy_creeps[creep_idx], false)
+    else
+        wrong_action = 1
     end
 end
 
@@ -77,15 +87,14 @@ function attack_tower()
     local towers = bot:GetNearbyTowers(1500, true)
     if #towers > 0 then
         bot:Action_AttackUnit(towers[1], false)
+    else
+        wrong_action = 1
     end
-end
-
-function move_to_position(position_vector)
-    bot:Action_MoveToLocation(position_vector)
 end
 
 function upgrade_abilities()
     bot:ActionImmediate_LevelAbility('nevermore_shadowraze1')
+    bot:ActionImmediate_LevelAbility('nevermore_requiem')
 end
 
 --- Execute given action.
@@ -94,6 +103,7 @@ end
 function Action.execute_action(action_info)
     local action = action_info['action']
     local action_params = action_info['params']
+    wrong_action = 0
 
     upgrade_abilities()
 
@@ -111,6 +121,8 @@ function Action.execute_action(action_info)
     elseif action == ACTION_ATTACK_TOWER then
         attack_tower()
     end
+
+    return wrong_action
 end
 
 return Action;

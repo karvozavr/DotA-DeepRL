@@ -14,12 +14,14 @@ local SEND_OBSERVATION = 2
 local DO_NOTHING = 3
 local fsm_state = SEND_OBSERVATION
 
+local wrong_action = 0
+
 --- Executes received action.
 -- @param action_info bot action
 --
 function execute_action(action_info)
     print("Execute order.", action_info)
-    Action.execute_action(action_info)
+    wrong_action = Action.execute_action(action_info)
 end
 
 --- Create JSON message from table 'message' of type 'type'.
@@ -83,7 +85,7 @@ function send_observation_message()
 
     local msg = {
         ['observation'] = Observation.get_observation(),
-        ['reward'] = Reward.get_reward(),
+        ['reward'] = Reward.get_reward(wrong_action),
         ['done'] = _end,
         ['state_num'] = state_num
     }
