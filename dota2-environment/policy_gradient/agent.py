@@ -7,6 +7,9 @@ logger = logging.getLogger('agent')
 
 
 class PGAgent:
+    """
+    Policy gradient agent.
+    """
     __slots__ = ('env',
                  'replay_buffer',
                  'network',
@@ -22,19 +25,26 @@ class PGAgent:
         self.eps = eps
         self.discount = discount
 
-    def policy_gradient(self):
+    def train(self):
         for episode in range(self.episodes):
             states, actions, rewards = self.sample_data()
             rewards = np.array(rewards)
 
-            logger.debug('Finished episode {ep} with total reward {rew}.'.format(ep=episode, rew=np.sum(rewards)))
+            logger.info('Finished episode {ep} with total reward {rew}.'.format(ep=episode, rew=np.sum(rewards)))
 
             rewards = self.discount_rewards(rewards=rewards, gamma=self.discount)
             self.replay_buffer.extend(zip(states, actions, rewards))
             self.train_network()
+        logger.info('Finished training.')
 
     @staticmethod
     def discount_rewards(rewards, gamma):
+        """
+        Discount rewards backwards.
+        :param rewards: rewards numpy array
+        :param gamma: discount factor
+        :return: discounted rewards array
+        """
         running_add = 0
         for t in reversed(range(0, len(rewards))):
             running_add = running_add * gamma + rewards[t]
