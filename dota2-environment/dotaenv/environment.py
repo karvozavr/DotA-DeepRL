@@ -24,8 +24,8 @@ class DotaEnvironment(Environment):
             start_game()
         return server.get_observation()[0]
 
-    def execute(self, actions):
-        state, reward, terminal = server.step(action=actions)
+    def execute(self, action):
+        state, reward, terminal = server.step(action=action)
         self.terminal = terminal
         return state, terminal, reward
 

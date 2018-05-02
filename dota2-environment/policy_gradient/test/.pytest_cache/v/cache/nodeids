@@ -1,3 +1,3 @@
 [
-  "test.py::TestPGAgent::test_smoke"
+  "test_network.py::TestNetwork::test_train"
 ]

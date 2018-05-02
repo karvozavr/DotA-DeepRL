@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
 
-from policy_gradient import PGAgent, ReplayBuffer, Network
+from policy_gradient import PGAgent
 from dotaenv import DotaEnvironment
 
 
 def create_dota_agent():
-    return PGAgent(environment=DotaEnvironment, network=Network)
-
-
-def learn():
-    raise NotImplementedError
+    return PGAgent(environment=DotaEnvironment)
 
 
 def main():
-    raise NotImplementedError
+    agent = create_dota_agent()
+    agent.train()
 
 
 if __name__ == '__main__':

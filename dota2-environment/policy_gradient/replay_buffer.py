@@ -1,6 +1,8 @@
+import itertools
 import os
 from collections import deque
 import pickle
+import numpy as np
 
 
 class ReplayBuffer:
@@ -51,3 +53,15 @@ class ReplayBuffer:
         :param elements: list of elements
         """
         self.data.extend(elements)
+
+    def get_data(self, batch_size):
+        """
+        Get batch of data.
+        :param batch_size: batch size
+        :return: 3 iterators: states, actions, rewards
+        """
+        size = len(self.data)
+        data = list(itertools.islice(self.data, size - batch_size, size))
+        return [s for s, a, r in data], \
+               [a for s, a, r in data], \
+               [r for s, a, r in data]
