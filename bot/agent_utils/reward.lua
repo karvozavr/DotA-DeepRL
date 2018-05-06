@@ -30,10 +30,6 @@ function max(x, y)
     end
 end
 
-function abs(x)
-    max(x, 0)
-end
-
 function get_enemy()
     local enemy_table = GetUnitList(UNIT_LIST_ENEMY_HEROES)
     local enemy
@@ -122,7 +118,7 @@ function Reward.get_reward(wrong_action)
     local hits = get_last_hits()
 
     local reward = -(my_deaths - last_deaths) * 10000 -- deaths
-            + (my_kills - last_kills) * 100000 -- kills
+            + (my_kills - last_kills) * 1000000 -- kills
             + max(enemy_tower_health - last_enemy_tower_health, 0) * 5 * is_near_enemy_tower() -- enemy tower
             - max(ally_tower_health - last_ally_tower_health, 0)
             + max(enemy_health - last_enemy_health, 0) * 100 * recently_damaged_enemy()

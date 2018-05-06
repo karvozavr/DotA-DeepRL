@@ -1,4 +1,5 @@
 {
   "test.py": true,
+  "test_agent.py": true,
   "test_network.py": true
 }

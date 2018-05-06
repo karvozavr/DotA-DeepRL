@@ -15,6 +15,8 @@ local DO_NOTHING = 3
 local fsm_state = SEND_OBSERVATION
 
 local wrong_action = 0
+local this_bot = GetBot()
+local this_player_id = this_bot:GetPlayerID()
 
 --- Executes received action.
 -- @param action_info bot action
@@ -78,7 +80,8 @@ function send_observation_message()
     local _end = false
 
     --or (GameTime() - Action.last_time_moved()) > 5
-    if GetGameState() == GAME_STATE_POST_GAME then
+
+    if GetGameState() == GAME_STATE_POST_GAME or GetHeroKills(this_player_id) > 0 or GetHeroDeaths(this_player_id) > 0 then
         _end = true
         print('Bot: the game has ended.')
     end

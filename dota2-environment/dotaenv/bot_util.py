@@ -53,6 +53,7 @@ def action_to_json(action):
     local ACTION_USE_ABILITY = 3
     local ACTION_ATTACK_TOWER = 4
     local ACTION_MOVE_DISCRETE = 5
+    local ACTION_DO_NOTHING = 6
 
     :param action_vector: vectorized action
     :return: bot-compatible JSON action message
@@ -77,6 +78,9 @@ def action_to_json(action):
     elif action == 31:
         # attack tower
         action = 4
+    elif action == 32:
+        # do nothing
+        action = 6
 
     action_response = {
         'action': action,
@@ -98,7 +102,7 @@ def message_to_observation(observation_message):
         done = observation_message['done']
     else:
         observation = []
-        reward = 0
+        reward = 0.
         done = True
     return observation, reward, done
 
@@ -112,13 +116,13 @@ def vectorize_observation(observation):
     for creep_info in creeps:
         result.extend(creep_info)
     for i in range(max(10 - len(creeps), 0)):
-        result.extend([0] * 7)
+        result.extend([0] * 3)
 
     creeps = observation['ally_creeps_info']
     for creep_info in creeps:
         result.extend(creep_info)
     for i in range(max(10 - len(creeps), 0)):
-        result.extend([0] * 7)
+        result.extend([0] * 3)
 
     result.extend(observation['tower_info'])
     result.extend(observation['damage_info'])

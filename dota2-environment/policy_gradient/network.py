@@ -11,9 +11,10 @@ class Network:
                  'states',
                  'actions',
                  'rewards',
-                 'session')
+                 'session',
+                 'saver')
 
-    def __init__(self, input_shape=172, output_shape=25, learning_rate=0.01):
+    def __init__(self, input_shape=172, output_shape=25, learning_rate=0.01, restore=False):
         self.predict_op = None
         self.train_op = None
         self.states = None
@@ -22,6 +23,11 @@ class Network:
         self.build(input_shape=input_shape, output_shape=output_shape, learning_rate=learning_rate)
         self.session = tf.Session()
         self.session.run(tf.global_variables_initializer())
+
+        # initialize saver and restore if needed
+        self.saver = tf.train.Saver()
+        if restore:
+            self.saver.restore(self.session, 'saved_model/model.ckpt')
 
     def build(self, input_shape=172, output_shape=25, learning_rate=0.01):
         """
@@ -49,9 +55,9 @@ class Network:
         logits = tf.layers.dense(inputs=layer4, units=output_shape, activation=None)
 
         # loss
-        probabilities = tf.losses.softmax_cross_entropy(onehot_labels=onehot_actions, logits=logits)
-        loss = tf.reduce_mean(tf.multiply(probabilities, normalized_rewards))
-
+        ce = tf.losses.softmax_cross_entropy(onehot_labels=onehot_actions, logits=logits)
+        loss = tf.reduce_mean(tf.multiply(ce, normalized_rewards))
+    
         # predict operation
         self.predict_op = tf.nn.softmax(logits=logits)
 
@@ -69,6 +75,7 @@ class Network:
         :param rewards: normalized discounted rewards np.array of shape (batch_size, )
         """
         self.session.run(self.train_op, feed_dict={self.states: states, self.actions: actions, self.rewards: rewards})
+        self.saver.save(self.session, 'saved_model/model.ckpt')
 
     def predict(self, state):
         """

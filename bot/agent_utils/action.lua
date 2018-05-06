@@ -7,6 +7,8 @@ local ACTION_ATTACK_HERO = 1
 local ACTION_ATTACK_CREEP = 2
 local ACTION_USE_ABILITY = 3
 local ACTION_ATTACK_TOWER = 4
+local ACTION_MOVE_DISCRETE = 5
+local ACTION_DO_NOTHING = 6
 local last_time_move = GameTime()
 
 local wrong_action = 0
@@ -38,6 +40,23 @@ function move_delta(delta_vector)
     position[2] = position[2] + delta_vector[2]
 
     bot:Action_MoveToLocation(position)
+end
+
+-- 16 possible directions: 0-15
+function move_discrete(direction)
+    print('MOVE DISCRETE')
+    local position = bot:GetLocation()
+    local x = 100
+    local y = 0
+    local theta = 0 + direction * (math.pi / 8)
+    local sin_theta = math.sin(theta)
+    local cos_theta = math.cos(theta)
+    print(sin_theta, cos_theta, math.pi)
+
+    position[1] = position[1] + x * cos_theta - y * sin_theta
+    position[2] = position[2] + x * sin_theta + y * cos_theta
+    print(x, y)
+    bot:Action_MoveDirectly(position)
 end
 
 --- Attack enemy hero.
@@ -120,6 +139,10 @@ function Action.execute_action(action_info)
         attack_creep(action_params[1])
     elseif action == ACTION_ATTACK_TOWER then
         attack_tower()
+    elseif action == ACTION_MOVE_DISCRETE then
+        move_discrete(action_params[1])
+    elseif action == ACTION_DO_NOTHING then
+        -- do nothing
     end
 
     return wrong_action

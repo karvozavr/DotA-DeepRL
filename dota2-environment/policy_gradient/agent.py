@@ -6,10 +6,10 @@ import numpy as np
 import random
 from sklearn.preprocessing import OneHotEncoder
 
-logger = logging.getLogger('PGAgent')
+logger = logging.getLogger('DotaRL.PGAgent')
 
-input_shape = 172
-output_shape = 32
+input_shape = 83
+output_shape = 33
 
 
 class PGAgent:
@@ -22,9 +22,10 @@ class PGAgent:
                  'episodes',
                  'discount',
                  'batch_size',
+                 'eps_update',
                  'eps')
 
-    def __init__(self, environment, episodes=100, batch_size=100, eps=0.7, discount=0.99):
+    def __init__(self, environment, episodes=100, batch_size=100, eps=0.7, discount=0.99, eps_update=0.95):
         self.env = environment()
         self.replay_buffer = ReplayBuffer()
         self.network = Network(input_shape=input_shape, output_shape=output_shape)
@@ -32,14 +33,15 @@ class PGAgent:
         self.batch_size = batch_size
         self.eps = eps
         self.discount = discount
+        self.eps_update = eps_update
 
     def train(self):
         for episode in range(self.episodes):
             # sample data
-            states, actions, rewards = self.sample_data()
+            states, actions, rewards = self.sample_data(steps=self.batch_size)
             rewards = np.array(rewards)
 
-            logger.info('Finished episode {ep} with total reward {rew}.'.format(ep=episode, rew=np.sum(rewards)))
+            logger.debug('Finished episode {ep} with total reward {rew}.'.format(ep=episode, rew=np.sum(rewards)))
 
             # discount and normalize rewards
             rewards = self.discount_rewards(rewards=rewards, gamma=self.discount)
@@ -49,13 +51,13 @@ class PGAgent:
             self.replay_buffer.extend(zip(states, actions, rewards))
 
             # update epsilon
-            self.update_eps(coefficient=0.95)
+            self.update_eps(coefficient=self.eps_update)
 
             # if there are enough data in replay buffer, train the model on it
             if len(self.replay_buffer) >= self.batch_size:
                 self.train_network()
 
-        logger.info('Finished training.')
+        logger.debug('Finished training.')
 
     def sample_data(self, steps=100):
         states = []
@@ -65,12 +67,13 @@ class PGAgent:
         for i in range(steps):
             action = self.get_action(state=state, eps=self.eps)
             state, terminal, reward = self.env.execute(action=action)
-            logger.info('Step {step} reward is {rew}.'.format(step=i, rew=reward))
+            if terminal:
+                break
+            logger.debug('Step {step} reward is {rew}.'.format(step=i, rew=reward))
             states.append(state)
             actions.append(action)
             rewards.append(reward)
-            if terminal:
-                break
+
         return states, actions, rewards
 
     def get_action(self, state, eps):
@@ -120,7 +123,7 @@ class PGAgent:
 
         rewards = np.array(rewards, dtype='float32')
 
-        logger.info('Training network on batch: states {s_shape}, actions {a_shape}, rewards {r_shape}.'
-                    .format(s_shape=states.shape, a_shape=actions.shape, r_shape=rewards.shape))
+        logger.debug('Training network on batch: states {s_shape}, actions {a_shape}, rewards {r_shape}.'
+                     .format(s_shape=states.shape, a_shape=actions.shape, r_shape=rewards.shape))
 
         self.network.train(states=states, actions=actions, rewards=rewards)
