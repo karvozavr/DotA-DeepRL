@@ -16,7 +16,7 @@ def launch_dota():
 
     gui.typewrite('dota', interval=0.1)
     gui.press('enter')
-    time.sleep(12)
+    time.sleep(8)
 
 
 def restart_game():

@@ -44,18 +44,16 @@ end
 
 -- 16 possible directions: 0-15
 function move_discrete(direction)
-    print('MOVE DISCRETE')
+    print('MOVE DISCRETE', direction)
     local position = bot:GetLocation()
     local x = 100
     local y = 0
     local theta = 0 + direction * (math.pi / 8)
     local sin_theta = math.sin(theta)
     local cos_theta = math.cos(theta)
-    print(sin_theta, cos_theta, math.pi)
 
     position[1] = position[1] + x * cos_theta - y * sin_theta
     position[2] = position[2] + x * sin_theta + y * cos_theta
-    print(x, y)
     bot:Action_MoveDirectly(position)
 end
 

@@ -1,5 +1,6 @@
 import logging
 
+from policy_gradient import replay_util
 from policy_gradient.replay_buffer import ReplayBuffer
 from policy_gradient.network import Network
 import numpy as np
@@ -7,6 +8,7 @@ import random
 from sklearn.preprocessing import OneHotEncoder
 
 logger = logging.getLogger('DotaRL.PGAgent')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 input_shape = 83
 output_shape = 33
@@ -25,10 +27,10 @@ class PGAgent:
                  'eps_update',
                  'eps')
 
-    def __init__(self, environment, episodes=100, batch_size=100, eps=0.7, discount=0.99, eps_update=0.95):
-        self.env = environment()
+    def __init__(self, environment, episodes=100, batch_size=100, eps=0.7, discount=0.99, eps_update=0.99):
         self.replay_buffer = ReplayBuffer()
         self.network = Network(input_shape=input_shape, output_shape=output_shape)
+        self.env = environment()
         self.episodes = episodes
         self.batch_size = batch_size
         self.eps = eps
@@ -39,7 +41,7 @@ class PGAgent:
         for episode in range(self.episodes):
             # sample data
             states, actions, rewards = self.sample_data(steps=self.batch_size)
-            rewards = np.array(rewards)
+            rewards = np.array(rewards, dtype='float32')
 
             logger.debug('Finished episode {ep} with total reward {rew}.'.format(ep=episode, rew=np.sum(rewards)))
 
@@ -55,7 +57,7 @@ class PGAgent:
 
             # if there are enough data in replay buffer, train the model on it
             if len(self.replay_buffer) >= self.batch_size:
-                self.train_network()
+                self.train_network(batch=self.replay_buffer.get_data(self.batch_size))
 
         logger.debug('Finished training.')
 
@@ -113,8 +115,25 @@ class PGAgent:
     def update_eps(self, coefficient=0.9):
         self.eps *= coefficient
 
-    def train_network(self):
-        states, actions, rewards = self.replay_buffer.get_data(self.batch_size)
+    def train_on_replay(self, batch_size=500, epochs=25):
+        states, actions, rewards = replay_util.read_replay()
+        rewards = np.array(rewards, dtype='float32')
+
+        # discount and normalize rewards
+        rewards = self.discount_rewards(rewards=rewards, gamma=self.discount)
+        rewards = self.normalize_rewards(rewards=rewards)
+        self.replay_buffer.extend(zip(states, actions, rewards))
+
+        for epoch in range(epochs):
+            i = 0
+            while i < len(self.replay_buffer):
+                batch = self.replay_buffer.get_batch(i, batch_size=batch_size)
+                self.train_network(batch=batch)
+                i += batch_size
+            logger.debug('Training: epoch {epoch}.'.format(epoch=epoch))
+
+    def train_network(self, batch):
+        states, actions, rewards = batch
         states = np.array(states)
 
         enc = OneHotEncoder(n_values=output_shape)

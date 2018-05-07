@@ -8,7 +8,7 @@ local ability2 = bot:GetAbilityByName('nevermore_shadowraze2')
 local ability3 = bot:GetAbilityByName('nevermore_shadowraze3')
 local ability4 = bot:GetAbilityByName('nevermore_requiem')
 
-local creep_zero_padding = { 0, 0, 0, 0, 0, 0, 0 }
+local creep_zero_padding = { 0, 0, 0 }
 
 -- Obtain team info.
 local function get_team()
@@ -95,7 +95,7 @@ function get_enemy_info()
         enemy = enemy_table[1]
     end
 
-    local enemy_hero_input = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    local enemy_hero_input = { 0, 0, 0, 0, 0, 0, 0 }
     if (enemy ~= nil) then
         local enemy_position = enemy:GetLocation()
         enemy_hero_input = {

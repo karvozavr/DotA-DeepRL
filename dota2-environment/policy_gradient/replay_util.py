@@ -1,6 +1,7 @@
 import json
 import numpy as np
 import math
+from dotaenv.bot_util import vectorize_observation
 
 
 def read_replay(file='data/replay.json'):
@@ -57,7 +58,7 @@ def get_observation(raw_obs):
             creep['y'],
         ])
 
-    observation.update(ally_creeps=ally_creeps)
+    observation.update(ally_creeps_info=ally_creeps)
 
     enemy_creeps_data = raw_obs['enemyCreeps']
     enemy_creeps = []
@@ -68,7 +69,7 @@ def get_observation(raw_obs):
             creep['y'],
         ])
 
-    observation.update(enemy_creeps=enemy_creeps)
+    observation.update(enemy_creeps_info=enemy_creeps)
 
     observation.update(tower_info=[
         raw_obs['enemyTowerHp'],
@@ -88,11 +89,11 @@ def get_move(x, y):
     angle = np.arctan2(y, x)
     if angle < 0:
         angle += 2 * math.pi
-    return round((angle / (2 * math.pi)) * 16) % 16
+    return int(round((angle / (2 * math.pi)) * 16)) % 16
 
 
 def get_action(action):
-    action_type = action['type']
+    action_type = action['actionType']
     dx = action['dx']
     dy = action['dy']
     param = action['param']
@@ -123,25 +124,4 @@ def get_reward(obs, prev):
     if prev is not None:
         reward -= (obs['ourHp'] == 0 and prev['ourHp'] != 0) * 1000
 
-
-def vectorize_observation(observation):
-    result = []
-    result.extend(observation['self_info'])
-    result.extend(observation['enemy_info'])
-
-    creeps = observation['enemy_creeps_info']
-    for creep_info in creeps:
-        result.extend(creep_info)
-    for i in range(max(10 - len(creeps), 0)):
-        result.extend([0] * 7)
-
-    creeps = observation['ally_creeps_info']
-    for creep_info in creeps:
-        result.extend(creep_info)
-    for i in range(max(10 - len(creeps), 0)):
-        result.extend([0] * 7)
-
-    result.extend(observation['tower_info'])
-    result.extend(observation['damage_info'])
-
-    return np.array(result)
+    return reward
