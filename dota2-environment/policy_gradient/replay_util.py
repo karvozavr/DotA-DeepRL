@@ -26,6 +26,8 @@ def read_replay(file='data/replay.json'):
 def get_observation(raw_obs):
     observation = {}
     observation.update(self_info=[
+        raw_obs['ourX'],
+        raw_obs['ourY'],
         raw_obs['ourAttackDamage'],
         raw_obs['ourLvl'],
         raw_obs['ourHp'],
@@ -35,17 +37,15 @@ def get_observation(raw_obs):
         int(raw_obs['isOurAbility2Available']),
         int(raw_obs['isOurAbility3Available']),
         int(raw_obs['isOurAbility4Available']),
-        raw_obs['ourX'],
-        raw_obs['ourY'],
     ])
     observation.update(enemy_info=[
+        raw_obs['enemyX'],
+        raw_obs['enemyY'],
         raw_obs['enemyAttackDamage'],
         raw_obs['enemyLvl'],
         raw_obs['enemyHp'],
         raw_obs['enemyMana'],
         raw_obs['enemyFacing'],
-        raw_obs['enemyX'],
-        raw_obs['enemyY'],
     ])
 
     # {"type":1,"hp":5,"maxHp":312,"x":-778,"y":-649,"isVisible":false}

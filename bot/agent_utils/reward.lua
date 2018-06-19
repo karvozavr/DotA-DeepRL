@@ -139,4 +139,18 @@ function Reward.get_reward(wrong_action)
     return reward
 end
 
+local target = GetTower(TEAM_RADIANT, TOWER_MID_1);
+
+function Reward.get_distance_to_tower()
+    return GetUnitToUnitDistance(this_bot, target)
+end
+
+-- TODO
+function Reward.tower_distance_reward()
+    local reward = GetUnitToUnitDistance(this_bot, target)
+    reward = math.exp(-0.002 * reward + 30)
+    print('Reward: ', reward)
+    return reward
+end
+
 return Reward;

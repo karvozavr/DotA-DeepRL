@@ -46,7 +46,7 @@ end
 function move_discrete(direction)
     print('MOVE DISCRETE', direction)
     local position = bot:GetLocation()
-    local x = 100
+    local x = 150
     local y = 0
     local theta = 0 + direction * (math.pi / 8)
     local sin_theta = math.sin(theta)
@@ -54,7 +54,7 @@ function move_discrete(direction)
 
     position[1] = position[1] + x * cos_theta - y * sin_theta
     position[2] = position[2] + x * sin_theta + y * cos_theta
-    bot:Action_MoveDirectly(position)
+    bot:Action_MoveToLocation(position)
 end
 
 --- Attack enemy hero.

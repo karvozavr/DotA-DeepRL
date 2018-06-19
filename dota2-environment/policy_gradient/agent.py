@@ -1,4 +1,5 @@
 import logging
+import pickle
 
 from policy_gradient import replay_util
 from policy_gradient.replay_buffer import ReplayBuffer
@@ -10,8 +11,10 @@ from sklearn.preprocessing import OneHotEncoder
 logger = logging.getLogger('DotaRL.PGAgent')
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-input_shape = 83
-output_shape = 33
+# TODO input_shape = 83
+# TODO output_shape = 33
+input_shape = 2
+output_shape = 16
 
 
 class PGAgent:
@@ -25,7 +28,8 @@ class PGAgent:
                  'discount',
                  'batch_size',
                  'eps_update',
-                 'eps')
+                 'eps',
+                 'rewards')
 
     def __init__(self, environment, episodes=100, batch_size=100, eps=0.7, discount=0.99, eps_update=0.99):
         self.replay_buffer = ReplayBuffer()
@@ -36,6 +40,7 @@ class PGAgent:
         self.eps = eps
         self.discount = discount
         self.eps_update = eps_update
+        self.rewards = []
 
     def train(self):
         for episode in range(self.episodes):
@@ -43,14 +48,21 @@ class PGAgent:
             states, actions, rewards = self.sample_data(steps=self.batch_size)
             rewards = np.array(rewards, dtype='float32')
 
-            logger.debug('Finished episode {ep} with total reward {rew}.'.format(ep=episode, rew=np.sum(rewards)))
+            logger.debug('Finished episode {ep} with total reward {rew}. eps={eps}'.format(ep=episode,
+                                                                                           rew=np.sum(rewards),
+                                                                                                       eps=self.eps))
+
+            self.rewards.extend(rewards)
+
+            with open('saved_rewards', 'wb') as output_file:
+                pickle.dump(obj=self.rewards, file=output_file)
 
             # discount and normalize rewards
-            rewards = self.discount_rewards(rewards=rewards, gamma=self.discount)
-            rewards = self.normalize_rewards(rewards=rewards)
+            disc_rewards = self.discount_rewards(rewards=rewards, gamma=self.discount)
+            norm_rewards = self.normalize_rewards(rewards=disc_rewards)
 
             # extend replay buffer with sampled data
-            self.replay_buffer.extend(zip(states, actions, rewards))
+            self.replay_buffer.extend(zip(states, actions, norm_rewards))
 
             # update epsilon
             self.update_eps(coefficient=self.eps_update)
@@ -71,7 +83,7 @@ class PGAgent:
             state, terminal, reward = self.env.execute(action=action)
             if terminal:
                 break
-            logger.debug('Step {step} reward is {rew}.'.format(step=i, rew=reward))
+            logger.debug('Step {step} state: {state}, action: {action}.'.format(step=i, rew=reward, action=action, state=state[:2]))
             states.append(state)
             actions.append(action)
             rewards.append(reward)
@@ -116,13 +128,14 @@ class PGAgent:
         self.eps *= coefficient
 
     def train_on_replay(self, batch_size=500, epochs=25):
-        states, actions, rewards = replay_util.read_replay()
-        rewards = np.array(rewards, dtype='float32')
+        self.replay_buffer.load_data()
+        # states, actions, rewards = self.replay_buffer.get_data(batch_size=len(self.replay_buffer))
+        # rewards = np.array(rewards, dtype='float32')
 
         # discount and normalize rewards
-        rewards = self.discount_rewards(rewards=rewards, gamma=self.discount)
-        rewards = self.normalize_rewards(rewards=rewards)
-        self.replay_buffer.extend(zip(states, actions, rewards))
+        # rewards = self.discount_rewards(rewards=rewards, gamma=self.discount)
+        # rewards = self.normalize_rewards(rewards=rewards)
+        # self.replay_buffer.extend(zip(states, actions, rewards))
 
         for epoch in range(epochs):
             i = 0
@@ -142,7 +155,8 @@ class PGAgent:
 
         rewards = np.array(rewards, dtype='float32')
 
-        logger.debug('Training network on batch: states {s_shape}, actions {a_shape}, rewards {r_shape}.'
-                     .format(s_shape=states.shape, a_shape=actions.shape, r_shape=rewards.shape))
+        logger.debug('Training network on batch: states {s_shape}, actions {a_shape}, rewards {r_shape}.\n Reward: {rew}'
+                     .format(s_shape=states.shape, a_shape=actions.shape, r_shape=rewards.shape, rew=rewards))
 
+        self.replay_buffer.save_data()
         self.network.train(states=states, actions=actions, rewards=rewards)

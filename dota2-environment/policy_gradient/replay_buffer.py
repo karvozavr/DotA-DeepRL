@@ -12,7 +12,7 @@ class ReplayBuffer:
     """
     __slots__ = ('data', 'filename')
 
-    def __init__(self, directory='./', max_size=1000000):
+    def __init__(self, directory='./', max_size=10000000):
         """
         Create new buffer with given params.
         :param directory: directory to work in

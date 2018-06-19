@@ -1,4 +1,5 @@
 # /usr/bin/env python3
+import time
 
 import dotaenv.bot_server as server
 from dotaenv.dota_runner import start_game, set_timescale, launch_dota, restart_game
@@ -22,6 +23,7 @@ class DotaEnvironment(Environment):
             restart_game()
             self.terminal = False
             start_game()
+            time.sleep(5)
         return server.get_observation()[0]
 
     def execute(self, action):

@@ -71,6 +71,8 @@ function get_self_info()
     -- Bot's atk, hp, mana, abilities, position x, position y
     local self_position = bot:GetLocation()
     local self_info = {
+        self_position[1],
+        self_position[2],
         bot:GetAttackDamage(),
         bot:GetLevel(),
         bot:GetHealth(),
@@ -80,8 +82,6 @@ function get_self_info()
         ability2_dmg,
         ability3_dmg,
         ability4_dmg,
-        self_position[1],
-        self_position[2]
     }
 
     return self_info
@@ -99,13 +99,13 @@ function get_enemy_info()
     if (enemy ~= nil) then
         local enemy_position = enemy:GetLocation()
         enemy_hero_input = {
+            enemy_position[1],
+            enemy_position[2],
             enemy:GetAttackDamage(),
             enemy:GetLevel(),
             enemy:GetHealth(),
             enemy:GetMana(),
             enemy:GetFacing(),
-            enemy_position[1],
-            enemy_position[2]
         }
     end
 

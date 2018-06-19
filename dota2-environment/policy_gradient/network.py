@@ -1,5 +1,10 @@
+import logging
+
 import tensorflow as tf
 import numpy as np
+
+logger = logging.getLogger('DotaRL.Network')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
 class Network:
@@ -11,15 +16,17 @@ class Network:
                  'states',
                  'actions',
                  'rewards',
+                 'loss',
                  'session',
                  'saver')
 
-    def __init__(self, input_shape=172, output_shape=25, learning_rate=0.01, restore=True):
+    def __init__(self, input_shape=172, output_shape=25, learning_rate=0.01, restore=False):
         self.predict_op = None
         self.train_op = None
         self.states = None
         self.actions = None
         self.rewards = None
+        self.loss = None
         self.build(input_shape=input_shape, output_shape=output_shape, learning_rate=learning_rate)
         self.session = tf.Session()
         self.session.run(tf.global_variables_initializer())
@@ -29,13 +36,14 @@ class Network:
         if restore:
             self.saver.restore(self.session, 'saved_model/model.ckpt')
 
-    def build(self, input_shape=172, output_shape=25, learning_rate=0.01):
+    def build(self, input_shape=172, output_shape=25, learning_rate=0.01, layer_shape=80):
         """
         Build action classifier network for policy gradient algorithm.
 
         :param input_shape: state shape
         :param output_shape: number of actions
         :param learning_rate: learning rate
+        :param layer_shape: inner layer shape
         """
         onehot_actions = tf.placeholder(dtype='float32', shape=(None, output_shape), name='y')
         input_layer = tf.placeholder(dtype='float32', shape=(None, input_shape), name='x')
@@ -46,18 +54,19 @@ class Network:
         self.rewards = normalized_rewards
 
         # network
-        layer1 = tf.layers.dense(inputs=input_layer, units=input_shape, activation=tf.nn.selu)
-        layer2 = tf.layers.dense(inputs=layer1, units=input_shape, activation=tf.nn.selu)
-        layer3 = tf.layers.dense(inputs=layer2, units=input_shape, activation=tf.nn.selu)
-        layer4 = tf.layers.dense(inputs=layer3, units=input_shape, activation=tf.nn.selu)
+        layer1 = tf.layers.dense(inputs=input_layer, units=layer_shape, activation=tf.nn.relu)
+        layer2 = tf.layers.dense(inputs=layer1, units=layer_shape, activation=tf.nn.relu)
+        # layer3 = tf.layers.dense(inputs=layer2, units=layer_shape, activation=tf.nn.selu)
+        # layer4 = tf.layers.dense(inputs=layer3, units=layer_shape, activation=tf.nn.selu)
 
         # output TODO activation
-        logits = tf.layers.dense(inputs=layer4, units=output_shape, activation=None)
+        logits = tf.layers.dense(inputs=layer2, units=output_shape, activation=tf.nn.relu)
 
         # loss
         ce = tf.losses.softmax_cross_entropy(onehot_labels=onehot_actions, logits=logits)
-        loss = tf.reduce_mean(tf.multiply(ce, normalized_rewards))
-    
+        loss = tf.multiply(ce, normalized_rewards)
+        self.loss = loss
+
         # predict operation
         self.predict_op = tf.nn.softmax(logits=logits)
 
@@ -74,7 +83,12 @@ class Network:
         :param actions:  np array of shape (batch_size, output_shape)
         :param rewards: normalized discounted rewards np.array of shape (batch_size, )
         """
-        self.session.run(self.train_op, feed_dict={self.states: states, self.actions: actions, self.rewards: rewards})
+        # TODO TEMP SLICE
+        self.session.run(self.train_op, feed_dict={self.states: states[:, :2], self.actions: actions,
+                                                   self.rewards: rewards})
+        loss = self.session.run(self.loss, feed_dict={self.states: states[:, :2], self.actions: actions,
+                                               self.rewards: rewards})
+        #logger.debug(loss)
         self.saver.save(self.session, 'saved_model/model.ckpt')
 
     def predict(self, state):
@@ -84,4 +98,5 @@ class Network:
         :param state: given state
         :return: predicted action (number)
         """
-        return np.argmax(self.session.run(self.predict_op, feed_dict={self.states: np.array([state])}))
+        # TODO TEMP SLICE
+        return np.argmax(self.session.run(self.predict_op, feed_dict={self.states: np.array([state[:2]])}))
