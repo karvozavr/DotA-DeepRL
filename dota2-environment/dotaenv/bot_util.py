@@ -43,29 +43,44 @@ class ActionClass:
 #     return action_response
 
 
-def action_to_json(actions_dict):
+def action_to_json(action):
     """
     Lua indexes starts from 1!
+
+    local ACTION_MOVE = 0
+    local ACTION_ATTACK_HERO = 1
+    local ACTION_ATTACK_CREEP = 2
+    local ACTION_USE_ABILITY = 3
+    local ACTION_ATTACK_TOWER = 4
+    local ACTION_MOVE_DISCRETE = 5
+    local ACTION_DO_NOTHING = 6
 
     :param action_vector: vectorized action
     :return: bot-compatible JSON action message
     """
 
     params = []
-    action = int(actions_dict['action_type'])
-    if action is 0:
+    if 0 <= action < 16:
         # move
-        params.append(float(actions_dict['move_vector'][0]))
-        params.append(float(actions_dict['move_vector'][1]))
-    elif action is 1:
-        # attack hero
-        pass
-    elif action is 2:
+        params.append(int(action))
+        action = 5
+    elif 16 <= action < 26:
         # attack creep
-        params.append(int(actions_dict['creep_index']) + 1)
-    elif action is 3:
+        params.append(int(action - 16) + 1)
+        action = 2
+    elif 26 <= action < 30:
         # use ability
-        params.append(int(actions_dict['ability_index']) + 1)
+        params.append(int(action - 26) + 1)
+        action = 3
+    elif action == 30:
+        # attack hero
+        action = 1
+    elif action == 31:
+        # attack tower
+        action = 4
+    elif action == 32:
+        # do nothing
+        action = 6
 
     action_response = {
         'action': action,
@@ -87,7 +102,7 @@ def message_to_observation(observation_message):
         done = observation_message['done']
     else:
         observation = []
-        reward = 0
+        reward = 0.
         done = True
     return observation, reward, done
 
@@ -101,13 +116,13 @@ def vectorize_observation(observation):
     for creep_info in creeps:
         result.extend(creep_info)
     for i in range(max(10 - len(creeps), 0)):
-        result.extend([0] * 7)
+        result.extend([0] * 3)
 
     creeps = observation['ally_creeps_info']
     for creep_info in creeps:
         result.extend(creep_info)
     for i in range(max(10 - len(creeps), 0)):
-        result.extend([0] * 7)
+        result.extend([0] * 3)
 
     result.extend(observation['tower_info'])
     result.extend(observation['damage_info'])

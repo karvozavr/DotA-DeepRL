@@ -3,11 +3,6 @@ offset = 2;
 function Think()
     if (GetTeam() == TEAM_RADIANT) then
         print("selecting radiant");
---        local req = CreateHTTPRequest(':5000/what_next')
---        req:SetHTTPRequestRawPostBody('application/json', 'I AM ALIVE!')
---        req:Send(function(result)
---            -- do nothing
---        end)
         SelectHero(0 + offset, "npc_dota_hero_sven");
         SelectHero(1 + offset, "npc_dota_hero_sven");
         SelectHero(2 + offset, "npc_dota_hero_nevermore");

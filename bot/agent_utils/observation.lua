@@ -8,7 +8,7 @@ local ability2 = bot:GetAbilityByName('nevermore_shadowraze2')
 local ability3 = bot:GetAbilityByName('nevermore_shadowraze3')
 local ability4 = bot:GetAbilityByName('nevermore_requiem')
 
-local creep_zero_padding = { 0, 0, 0, 0, 0, 0, 0 }
+local creep_zero_padding = { 0, 0, 0 }
 
 -- Obtain team info.
 local function get_team()
@@ -40,9 +40,7 @@ function get_towers_info()
     end
 
     return {
-        enemy_tower:GetMaxHealth(),
         enemy_tower:GetHealth(),
-        ally_tower:GetMaxHealth(),
         ally_tower:GetHealth()
     }
 end
@@ -52,42 +50,38 @@ end
 function get_self_info()
     local ability1_dmg = 0
     if ability1:IsFullyCastable() then
-        ability1_dmg = ability1:GetAbilityDamage()
+        ability1_dmg = 1
     end
 
     local ability2_dmg = 0
     if ability2:IsFullyCastable() then
-        ability2_dmg = ability2:GetAbilityDamage()
+        ability2_dmg = 1
     end
 
     local ability3_dmg = 0
     if ability3:IsFullyCastable() then
-        ability3_dmg = ability3:GetAbilityDamage()
+        ability3_dmg = 1
     end
 
     local ability4_dmg = 0
     if ability4:IsFullyCastable() then
-        ability4_dmg = ability4:GetAbilityDamage()
+        ability4_dmg = 1
     end
 
     -- Bot's atk, hp, mana, abilities, position x, position y
     local self_position = bot:GetLocation()
     local self_info = {
+        self_position[1],
+        self_position[2],
         bot:GetAttackDamage(),
-        bot:GetAttackSpeed(),
         bot:GetLevel(),
         bot:GetHealth(),
-        bot:GetMaxHealth(),
         bot:GetMana(),
-        bot:GetMaxMana(),
         bot:GetFacing(),
         ability1_dmg,
         ability2_dmg,
         ability3_dmg,
         ability4_dmg,
-        bot:DistanceFromFountain(),
-        self_position[1],
-        self_position[2]
     }
 
     return self_info
@@ -101,20 +95,17 @@ function get_enemy_info()
         enemy = enemy_table[1]
     end
 
-    local enemy_hero_input = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    local enemy_hero_input = { 0, 0, 0, 0, 0, 0, 0 }
     if (enemy ~= nil) then
         local enemy_position = enemy:GetLocation()
         enemy_hero_input = {
+            enemy_position[1],
+            enemy_position[2],
             enemy:GetAttackDamage(),
-            enemy:GetAttackSpeed(),
             enemy:GetLevel(),
             enemy:GetHealth(),
-            enemy:GetMaxHealth(),
             enemy:GetMana(),
-            enemy:GetMaxMana(),
             enemy:GetFacing(),
-            enemy_position[1],
-            enemy_position[2]
         }
     end
 
@@ -134,11 +125,7 @@ function get_creeps_info(creeps)
     do
         local position = creep:GetLocation()
         table.insert(creeps_info, {
-            creep:GetAttackDamage(),
             creep:GetHealth(),
-            creep:GetMaxHealth(),
-            creep:GetArmor(),
-            creep:GetAttackRange(),
             position[1],
             position[2]
         })

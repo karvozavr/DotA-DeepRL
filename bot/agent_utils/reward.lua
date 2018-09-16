@@ -1,222 +1,155 @@
-local Constant = require(GetScriptDirectory()..'/dev/constant_each_side')
-local DotaBotUtility = require(GetScriptDirectory()..'/utility')
-
 Reward = {}
 
-local LastEnemyHP = 1000
+local this_bot = GetBot()
 
 local enemy_tower = GetTower(TEAM_DIRE, TOWER_MID_1);
 local ally_tower = GetTower(TEAM_RADIANT, TOWER_MID_1);
 if GetTeam() == TEAM_DIRE then
-    temp = ally_tower
+    local temp = ally_tower
     ally_tower = enemy_tower
     enemy_tower = temp
 end
 
-local EnemyTowerPosition = enemy_tower:GetLocation()
-local AllyTowerPosition = ally_tower:GetLocation()
+local this_player_id = this_bot:GetPlayerID()
 
-local LastEnemyTowerHP = 1300
+local last_enemy_tower_health = 1300
+local last_ally_tower_health = 1300
 
-local LastDecesion = -1000
+local last_enemy_health = 1000
+local last_my_health = 1000
 
-local LastKill = 0
+local last_kills = 0
+local last_deaths = 0
+local last_hits = 0
 
-local LastDeath = 0
-
-local LastXPNeededToLevel = 0
-
-local DeltaTime = 300 / 2
-
-local GotOrder = false
-
-local creep_zero_padding = {0,0,0,0,0,0,0}
-
-local first = "true"
-
-local punish = 0
-
-local vec_delta = Vector(0,0,0)
-
-local map_div = 7000
-
-local msg_done = false
-
-local seq_num = 0
-
-local my_last_gold
-
-function Reward.get_reward()
-	local npcBot = GetBot()
-    local enemyBotTbl = GetUnitList(UNIT_LIST_ENEMY_HEROES)
-    local enemyBot = nil
-    if enemyBotTbl ~= nil then
-        enemyBot = enemyBotTbl[1]
-    end
-
-    local myid = npcBot:GetPlayerID()
-
-    local MyKill = GetHeroKills(myid)
-    local MyDeath = GetHeroDeaths(myid)
-
-    if(enemyBot ~= nil) then
-        npcBot:SetTarget(enemyBot)
-    end
-    local enemyTower = GetTower(TEAM_DIRE, TOWER_MID_1);
-    local AllyTower = GetTower(TEAM_RADIANT, TOWER_MID_1);
-
-    if my_last_gold == nil then
-        my_last_gold = npcBot:GetGold()
-    end
-
-    local GoldReward = 0
-
-    if npcBot:GetGold() - my_last_gold > 5 then
-        GoldReward = (npcBot:GetGold() - my_last_gold)
-    end
-
-    local _XPNeededToLevel = npcBot:GetXPNeededToLevel()
-
-    local XPreward = 0
-
-    if _XPNeededToLevel < LastXPNeededToLevel then
-        XPreward = LastXPNeededToLevel - _XPNeededToLevel
-    end
-
-    if MyLastHP == nil then
-        MyLastHP = npcBot:GetHealth()
-    end
-
-    if LastEnemyHP == nil then
-        LastEnemyHP = 600
-    end
-
-    if LastDistanceToEnemy == nil then
-        LastDistanceToEnemy = 2000
-    end
-
-    if LastEnemyMaxHP == nil then
-        LastEnemyMaxHP = 1000
-    end
-
-    if(enemyBot ~= nil) then
-        EnemyHP = enemyBot:GetHealth()
-        EnemyMaxHP = enemyBot:GetMaxHealth()
+function max(x, y)
+    if x >= y then
+        return x
     else
+        return y
+    end
+end
 
-        EnemyHP = 600
-        EnemyMaxHP = 1000
+function get_enemy()
+    local enemy_table = GetUnitList(UNIT_LIST_ENEMY_HEROES)
+    local enemy
+    if #enemy_table > 0 then
+        enemy = enemy_table[1]
     end
 
-    if(enemyBot ~= nil and enemyBot:CanBeSeen()) then
-        DistanceToEnemy = GetUnitToUnitDistance(npcBot,enemyBot)
-        if(DistanceToEnemy > 2000) then
-            DistanceToEnemy = 2000
-        end
+    return enemy
+end
+
+function get_my_health()
+    return this_bot:GetHealth()
+end
+
+function get_enemy_health()
+    local enemy = get_enemy()
+    local enemy_health
+    if enemy ~= nil then
+        enemy_health = enemy:GetHealth()
     else
-        DistanceToEnemy = LastDistanceToEnemy
+        enemy_health = last_enemy_health
     end
+    return enemy_health
+end
 
-    if EnemyHP < 0 then
-        EnemyHP = LastEnemyHP
-        EnemyMaxHP = LastEnemyMaxHP
-    end
-
-    if AllyTowerLastHP == nil then
-        AllyTowerLastHP = AllyTower:GetHealth()
-    end
-
-    if enemyTower:GetHealth() > 0 then
-        EnemyTowerHP = enemyTower:GetHealth()
+function get_enemy_max_health()
+    local enemy = get_enemy()
+    local enemy_max_health
+    if enemy ~= nil then
+        enemy_max_health = enemy:GetMaxHealth()
     else
-        EnemyTowerHP = LastEnemyTowerHP
+        enemy_max_health = last_enemy_health
     end
-    local AllyLaneFront = GetLaneFrontLocation(DotaBotUtility:GetEnemyTeam(), LANE_MID, 0)
-    local EnemyLaneFront = GetLaneFrontLocation(TEAM_RADIANT,LANE_MID,0)
+    return enemy_max_health
+end
 
-    local DistanceToEnemyLane = GetUnitToLocationDistance(npcBot,EnemyLaneFront)
-    local DistanceToAllyLane = GetUnitToLocationDistance(npcBot,AllyLaneFront)
+function get_enemy_tower_health()
+    return enemy_tower:GetHealth()
+end
 
-    local DistanceToEnemyTower = GetUnitToLocationDistance(npcBot,EnemyTowerPosition)
-    local DistanceToAllyTower = GetUnitToLocationDistance(npcBot,AllyTowerPosition)
+function get_ally_tower_health()
+    return ally_tower:GetHealth()
+end
 
-    local DistanceToLane = (DistanceToEnemyLane + DistanceToAllyLane) / 2
+function get_my_kills()
+    return GetHeroKills(this_player_id)
+end
 
-    if LastDistanceToLane == nil then
-        LastDistanceToLane = DistanceToLane
+function get_my_deaths()
+    return GetHeroDeaths(this_player_id)
+end
+
+function get_distance_to_tower_punishment()
+    return GetUnitToUnitDistance(this_bot, ally_tower) + GetUnitToUnitDistance(this_bot, enemy_tower)
+end
+
+function get_last_hits()
+    return this_bot:GetLastHits()
+end
+
+function recently_damaged_enemy()
+    local enemy = get_enemy()
+    local result = 0
+    if enemy ~= nil and enemy:WasRecentlyDamagedByAnyHero(5.0) then
+        result = 1
     end
 
-    if(LastEnemyLocation == nil) then
-        if(GetTeam() == TEAM_RADIANT) then
-            LastEnemyLocation = Vector(6900,6650)
-        else
-            LastEnemyLocation = Vector(-7000,-7000)
-        end
-    end
+    return result
+end
 
-    local EnemyLocation = Vector(0,0)
-    if(enemyBot~=nil) then
-        EnemyLocation = enemyBot:GetLocation()
+function is_near_enemy_tower()
+    if GetUnitToUnitDistance(this_bot, enemy_tower) < 1000 then
+        return 1
     else
-        EnemyLocation = LastEnemyLocation
+        return 0
     end
+end
 
-    local MyLocation = npcBot:GetLocation()
+function Reward.get_reward(wrong_action)
+    local my_health = get_my_health()
+    local my_deaths = get_my_deaths()
+    local my_kills = get_my_kills()
+    local enemy_health = get_enemy_health()
+    local enemy_tower_health = get_enemy_tower_health()
+    local ally_tower_health = get_ally_tower_health()
+    local hits = get_last_hits()
 
-    local BotTeam = 0
-    if(GetTeam() == TEAM_RADIANT) then
-        BotTeam = 1
-    else
-        BotTeam = -1
-    end
+    local reward = -(my_deaths - last_deaths) * 10000 -- deaths
+            + (my_kills - last_kills) * 1000000 -- kills
+            + max(enemy_tower_health - last_enemy_tower_health, 0) * 5 * is_near_enemy_tower() -- enemy tower
+            - max(ally_tower_health - last_ally_tower_health, 0)
+            + max(enemy_health - last_enemy_health, 0) * 100 * recently_damaged_enemy()
+            - max(my_health - last_my_health, 0) * 100
+            + max(hits - last_hits, 0) * 10000
+            - get_distance_to_tower_punishment() / 200
+            - wrong_action * 30
 
-    if npcBot:DistanceFromFountain() == 0 and npcBot:GetHealth() == npcBot:GetMaxHealth() then
-        punish = punish + 5
-    end
+    last_enemy_tower_health = enemy_tower_health
+    last_ally_tower_health = ally_tower_health
+    last_deaths = my_deaths
+    last_kills = my_kills
+    last_hits = hits
+    last_my_health = my_health
+    last_enemy_health = enemy_health
 
-    local EnemyHPReward = 0
-    if (EnemyHP - LastEnemyHP) < 0 then
-        EnemyHPReward = (EnemyHP - LastEnemyHP)-- * 2
-    end
+    print('Reward: ', reward)
+    return reward
+end
 
-    local dist2line = PointToLineDistance(Vector(8000,8000), Vector(-8000,-8000), MyLocation)["distance"]
+local target = GetTower(TEAM_RADIANT, TOWER_MID_1);
 
-    local distance2mid = 0.1 * math.sqrt(MyLocation[1]*MyLocation[1] + MyLocation[2] * MyLocation[2])
-        + dist2line
+function Reward.get_distance_to_tower()
+    return GetUnitToUnitDistance(this_bot, target)
+end
 
-    -- print("dist2line", dist2line)
-
-    if MyLastDistance2mid == nil then
-        MyLastDistance2mid = distance2mid
-    end
-
-    local reward =
-        (npcBot:GetHealth() - MyLastHP) / 10.0
-        - EnemyHPReward
-        + (MyKill - LastKill) * 1000
-        - (MyDeath - LastDeath) * 100
-        + GoldReward
-        + XPreward / 10.0
-        - (MyLastDistance2mid - distance2mid) / 100.0
-
-    if enemyTower:GetHealth() > 0 then
-        LastEnemyTowerHP = enemyTower:GetHealth()
-    end
-
-    MyLastHP = npcBot:GetHealth()
-    AllyTowerLastHP = AllyTower:GetHealth()
-    LastEnemyHP = EnemyHP
-    LastEnemyMaxHP = EnemyMaxHP
-    my_last_gold = npcBot:GetGold()
-    LastDistanceToLane = DistanceToLane
-    LastDistanceToEnemy = DistanceToEnemy
-    LastEnemyLocation = EnemyLocation
-    LastKill = MyKill
-    LastDeath = MyDeath
-    LastXPNeededToLevel = _XPNeededToLevel
-    MyLastDistance2mid = distance2mid
-    punish = 0
-
+-- TODO
+function Reward.tower_distance_reward()
+    local reward = GetUnitToUnitDistance(this_bot, target)
+    reward = math.exp(-0.002 * reward + 30)
+    print('Reward: ', reward)
     return reward
 end
 

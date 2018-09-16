@@ -16,20 +16,27 @@ def launch_dota():
 
     gui.typewrite('dota', interval=0.1)
     gui.press('enter')
-    time.sleep(12.5)
+    time.sleep(18)
 
 
 def restart_game():
-    time.sleep(3)
-    gui.click(x=185, y=135, pause=1.5)
-    gui.click(x=1555, y=975, pause=1.5)
+    # time.sleep(3)
+    # gui.click(x=185, y=135, pause=1.5)
+    # gui.click(x=1555, y=975, pause=1.5)
+    # # yes button
+    # gui.click(x=900, y=620, pause=1.5)
+    # time.sleep(3)
+    gui.press('\\', pause=0.1)
+    gui.typewrite('restart', interval=0.05, pause=0.3)
+    gui.press('enter', pause=0.1)
+    gui.press('\\', pause=0.1)
 
 
 def start_game():
     # start
     gui.click(x=1555, y=975, pause=0.5)
     # create lobby
-    gui.click(x=1555, y=435, pause=2)
+    gui.click(x=1555, y=335, pause=2)
     # join coaches
     gui.click(x=1415, y=480, pause=2)
     # start game

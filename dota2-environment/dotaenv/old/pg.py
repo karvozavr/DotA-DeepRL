@@ -2,7 +2,7 @@
 
 import numpy as np
 import scipy.special
-from environment import DotaEnvironment
+from dotaenv import DotaEnvironment
 
 
 def include_bias(x):
